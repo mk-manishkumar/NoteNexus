@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoteNexus - A Note Taking App</title>
+    <link rel="stylesheet" href="src/style.css" />
+    <!-- FONT AWESOME -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- header -->
+    <header id="header">
+      <div class="head">
+        <h1 class="name">NoteNexus</h1>
+      </div>
+
+      <!-- nav icons -->
+      <div class="nav" id="#nav">
+        <i class="fa-solid fa-house" id="home" title="Home Page">
+          <span id="navText" class="homeText">HOME</span>
+        </i>
+
+        <i class="fa-solid fa-trash" id="bin" title="Bin">
+          <span id="navText" class="binText">BIN</span>
+        </i>
+
+        <i class="fa-solid fa-file" id="archive" title="Archive">
+          <span id="navText" class="archiveText">ARCHIVE</span>
+        </i>
+      </div>
+
+      <!-- hamburger menu -->
+      <button class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </header>
+
+    <!-- section -->
+    <div id="section">
+      <div class="main-box">
+        <input type="text" placeholder="Title" class="title-of-notes" />
+        <span class="error" id="titleError"></span>
+        <textarea
+          name=""
+          id=""
+          cols="30"
+          rows="10"
+          placeholder="Take a note..."
+          class="description"
+        ></textarea>
+        <span class="error" id="descError"></span>
+        <div class="buttons">
+          <button class="add-note-btn">Add Note</button>
+          <button class="close-btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- UI after creating notes -->
+    <div id="notes"></div>
+
+    <!-- UI for bin folder -->
+    <div class="del-section">
+      <h2
+        style="
+          display: none;
+          text-align: center;
+          margin-top: 1rem;
+          font-weight: 400;
+        "
+      >
+        Deleted Notes
+      </h2>
+      <div class="toClear">
+        <button style="display: none" class="clear-all">Clear All</button>
+      </div>
+      <div class="delete-div"></div>
+    </div>
+
+    <!-- UI for Archive folder -->
+    <div class="archive-section">
+      <h2
+        style="
+          display: none;
+          text-align: center;
+          margin-top: 1rem;
+          font-weight: 400;
+        "
+      >
+        Archived Notes
+      </h2>
+      <div class="archive-div"></div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="src/app.js"></script>
+  </body>
+</html>
