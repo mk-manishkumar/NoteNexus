@@ -201,11 +201,11 @@ const deleteLibrary = () => {
       delContent += `<div class="note-card">
          <div class="top">
            <div class="display-title">
-             <textarea class="show-title">${binNotes[i].title}</textarea>
+             <textarea class="show-title" readonly>${binNotes[i].title}</textarea>
            </div>
          </div>
          <div class="content">
-           <textarea class="show-desc">${binNotes[i].description}</textarea>
+           <textarea class="show-desc" readonly>${binNotes[i].description}</textarea>
          </div>
        </div>`;
     }
@@ -257,11 +257,11 @@ const archiveLibrary = () => {
     archiveContent += `<div class="note-card">
           <div class="top">
             <div class="display-title">
-              <textarea class="show-title">${archiveNotes[i].title}</textarea>
+              <textarea class="show-title" readonly>${archiveNotes[i].title}</textarea>
             </div>
           </div>
           <div class="content">
-            <textarea class="show-desc">${archiveNotes[i].description}</textarea>
+            <textarea class="show-desc" readonly>${archiveNotes[i].description}</textarea>
           </div>
           <div>
             <button class="restore" data-index="${i}">Restore</button>
