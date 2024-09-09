@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | NoteNexus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <div class="bg-zinc-900 w-full flex-grow">
+      <header class="bg-[#CA2B58] p-5">
+        <h1 class="font-[cursive] text-center text-white text-2xl tracking-tight">NoteNexus</h1>
+      </header>
+      <section>
+        <h2 class="text-center text-white mt-8 text-2xl">Register for NoteNexus</h2>
+      </section>
+      <!-- form -->
+      <form action="/register" method="post" class="mt-12 flex flex-col items-center">
+        <input class="block w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400" type="text" placeholder="Enter username" name="username" required />
+        <input class="block w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400" type="text" placeholder="Enter name" name="name" required />
+        <input class="block w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400" type="email" placeholder="Enter email" name="email" required />
+        <input class="block w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400" type="number" placeholder="Enter age" name="age" required />
+        <input class="block w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400" type="password" placeholder="Enter password" name="password" required />
+        <input class="bg-blue-500 text-white w-96 rounded-md px-4 py-2 mb-3" type="submit" value="Register" />
+        <p class="text-white">Already have an account? <a class="text-blue-500" href="/login">Click here to login.</a></p>
+      </form>
+    </div>
+
+    <footer class="bg-[#CA2B58] p-4">
+      <p class="text-center text-white text-xl tracking-tight">NoteNexus &copy; 2024</p>
+    </footer>
+  </body>
+</html>

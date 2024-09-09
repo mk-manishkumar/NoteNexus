@@ -1,0 +1,24 @@
+{
+  "name": "notenexus",
+  "version": "1.0.0",
+  "description": "This is a note-taking web application created using HTML, CSS, and JavaScript. It offers a user-friendly interface that enables you to create, edit, delete, and archive notes with ease. It is responsive and interactive, ensuring an excellent user experience.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "Manish Kumar",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.1",
+    "zod": "^3.23.8"
+  }
+}
