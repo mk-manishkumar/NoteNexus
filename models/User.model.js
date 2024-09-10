@@ -10,13 +10,19 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, "Invalid email format"], 
+      match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
     },
     age: { type: Number, required: true },
     password: { type: String, required: true },
+    notes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Notes", 
+      },
+    ],
   },
   { timestamps: true }
-); 
+);
 
 // Pre-save hook to hash the password before saving
 userSchema.pre("save", async function (next) {
@@ -26,4 +32,4 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-export default mongoose.model("User", userSchema); 
+export default mongoose.model("User", userSchema);

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes | <%= user.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <div class="bg-zinc-900 w-full flex-grow">
+      <nav class="flex justify-between bg-[#CA2B58] text-white p-5">
+        <div class="logo">
+          <a href="/profile/<%= user.username %>" class="text-2xl tracking-tight ml-8 font-[cursive]">NoteNexus</a>
+        </div>
+        <div class="nav-items flex gap-8 mr-8 text-md">
+          <a href="/notes">NOTES</a>
+          <a href="/bin">BIN</a>
+          <a href="/archive">ARCHIVE</a>
+        </div>
+      </nav>
+
+      <section class="my-8 mx-5 flex justify-between">
+        <h3 class="text-white text-2xl">Your notes are here, <span class="text-[#CA2B58]"><%= user.name %></span></h3>
+        <a class="bg-[#CA2B58] px-4 py-2 text-white rounded-md" href="/clearall">Clear All</a>
+      </section>
+
+      <div class="notes p-5">
+        <% if (notes.length > 0) { %>
+        <ul class="list-none flex gap-5 flex-wrap">
+          <% notes.forEach(note => { %>
+          <li class="bg-white text-black p-4 mb-2 rounded-md w-96 overflow-hidden bg-zinc-800 text-zinc-400">
+            <a class="font-bold text-2xl mb-2 inline-block text-blue-500" href=""><%= note.title %></a>
+            <p class="h-24 overflow-hidden"><%= note.description %></p>
+            <div class="btns mt-5 flex justify-between">
+              <!-- Form for deleting the note (moving to bin) -->
+              <form action="/deletenote" method="POST" class="inline">
+                <input type="hidden" name="noteId" value="<%= note._id %>" />
+                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
+              </form>
+              <!-- Form for archiving the note -->
+              <form action="/archivenote" method="POST" class="inline">
+                <input type="hidden" name="noteId" value="<%= note._id %>" />
+                <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded">Archive</button>
+              </form>
+            </div>
+          </li>
+          <% }) %>
+        </ul>
+        <% } else { %>
+        <p class="text-white">No notes as of now.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <footer class="bg-[#CA2B58] p-4">
+      <p class="text-center text-white text-xl tracking-tight">NoteNexus &copy; 2024</p>
+    </footer>
+  </body>
+</html>

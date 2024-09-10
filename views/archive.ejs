@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <div class="bg-zinc-900 w-full flex-grow">
+      <nav class="flex justify-between bg-[#CA2B58] text-white p-5">
+        <div class="logo">
+          <a href="/profile/<%= user.username %>" class="text-2xl tracking-tight ml-8 font-[cursive]">NoteNexus</a>
+        </div>
+        <div class="nav-items flex gap-8 mr-8 text-md">
+          <a href="/notes">NOTES</a>
+          <a href="/bin">BIN</a>
+          <a href="/archive">ARCHIVE</a>
+        </div>
+      </nav>
+
+      <section class="my-8 mx-5 flex justify-between">
+        <h3 class="text-white text-2xl">Here are your archived notes...</h3>
+        <a class="bg-[#CA2B58] px-4 py-2 text-white rounded-md" href="/clearallarchive">Clear All</a>
+      </section>
+
+      <div class="notes p-5">
+        <% if (notes.length > 0) { %>
+        <ul class="space-y-4">
+          <% notes.forEach(note => { %>
+          <li class="bg-zinc-800 p-4 rounded-md">
+            <h3 class="text-white text-xl"><%= note.title %></h3>
+            <p class="text-gray-400 mb-4"><%= note.description %></p>
+
+            <!-- Form to restore note -->
+            <form action="/restorenote" method="POST" class="inline">
+              <input type="hidden" name="noteId" value="<%= note._id %>" />
+              <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Restore</button>
+            </form>
+
+            <!-- Form to permanently delete note -->
+            <form action="/deletepermanently" method="POST" class="inline">
+              <input type="hidden" name="noteId" value="<%= note._id %>" />
+              <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+            </form>
+          </li>
+          <% }) %>
+        </ul>
+        <% } else { %>
+        <p class="text-white">No archived notes as of now.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <footer class="bg-[#CA2B58] p-4">
+      <p class="text-center text-white text-xl tracking-tight">NoteNexus &copy; 2024</p>
+    </footer>
+  </body>
+</html>

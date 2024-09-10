@@ -7,7 +7,11 @@ import { z } from "zod";
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   name: z.string().min(3, "Name must be at least 3 characters").max(30, "Name must be less than or equal to 30 characters"),
-  age: z.number().min(11, "Age must be at least 11").max(150, "Age must be less than or equal to 150"),
+  age: z.preprocess((value) => {
+    // Convert value to a number, if possible
+    const num = Number(value);
+    return Number.isNaN(num) ? undefined : num;
+  }, z.number().min(11, "Age must be at least 11").max(150, "Age must be less than or equal to 150")),
   email: z.string().email("Invalid email address"),
   password: z.string().min(4, "Password must be at least 4 characters"),
 });
@@ -27,7 +31,7 @@ export const register = async (req, res) => {
 
     res.redirect(`/profile/${user.username}`);
   } catch (err) {
-    res.status(400).send(err.errors || err.message);
+    res.status(400).send(err.message);
   }
 };
 
@@ -46,6 +50,6 @@ export const login = async (req, res) => {
 
     res.redirect(`/profile/${user.username}`);
   } catch (err) {
-    res.status(500).send("Server error");
+    res.status(500).send(err.message);
   }
 };

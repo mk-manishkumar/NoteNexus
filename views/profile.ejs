@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile</title>
+    <title><%= user.name %></title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="flex flex-col min-h-screen">
@@ -18,13 +18,18 @@
           <a href="/archive">ARCHIVE</a>
         </div>
       </nav>
+
+      <section class="my-8">
+        <h3 class="text-white text-2xl text-center">Hello, <span class="text-[#CA2B58]"><%= user.name %></span></h3>
+      </section>
+
       <!-- form -->
       <form action="/addnotes" method="post" class="mt-12 flex flex-col items-center">
-        <input class="block w-96 bg-zinc-800 mb-4 rounded-md px-5 py-2 outline-none text-zinc-400" type="text" placeholder="Enter Title" name="title" required />
+        <input class="block w-1/3 bg-zinc-800 mb-4 rounded-md px-5 py-4 outline-none text-zinc-400" type="text" placeholder="Enter Title" name="title" required />
 
-        <textarea name="description" placeholder="Enter description" class="mb-4 block w-96 rounded-md outline-none px-5 py-2 bg-zinc-800 resize-none"></textarea>
+        <textarea name="description" placeholder="Enter description" class="mb-4 block w-1/3 h-52 rounded-md outline-none px-5 py-2 bg-zinc-800 resize-none text-zinc-400" required></textarea>
 
-        <input class="bg-blue-500 text-white w-96 rounded-md px-4 py-2 mb-3" type="submit" value="Add Note" />
+        <input class="bg-blue-500 text-white w-1/3 rounded-md px-4 py-2 mb-3" type="submit" value="Add Note" />
 
         <a class="text-blue-500" href="/notes">Click here to see Notes.</a>
       </form>
