@@ -5,8 +5,9 @@ import Notes from "../models/Notes.model.js";
 export const fetchNotes = async (req, res) => {
   try {
     const userId = req.user.id;
+    const user = await User.findById(userId);
     const activeNotes = await Notes.find({ user: userId, isDeleted: false, isArchived: false });
-    res.render("notes", { notes: activeNotes });
+    res.render("notes", { notes: activeNotes, user });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -93,6 +94,18 @@ export const fetchArchivedNotes = async (req, res) => {
     const archivedNotes = await Notes.find({ user: userId, isArchived: true });
     res.render("archive", { notes: archivedNotes, user });
   } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+};
+
+// Clear All notes
+export const clearAllNotes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await Notes.updateMany({ user: userId, isDeleted: false, isArchived: false }, { $set: { isDeleted: true } });
+    res.redirect("/notes");
+  } catch (error) {
     console.error(err);
     res.status(500).send(err.message);
   }

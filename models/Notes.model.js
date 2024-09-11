@@ -14,14 +14,14 @@ const notesSchema = new mongoose.Schema(
       required: true,
       trim: true,
       minlength: 1,
-      maxlength: 500,
+      maxlength: 5000,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    isDeleted: { type: Boolean, default: false }, 
+    isDeleted: { type: Boolean, default: false },
     isArchived: { type: Boolean, default: false },
   },
   {

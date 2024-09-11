@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express from "express";
-import path, { dirname } from "path"; 
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 
@@ -14,6 +14,8 @@ connectDB();
 import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import notesRouter from "./routes/notesRoutes.js";
+import binRouter from "./routes/binRoutes.js";
+import archiveRouter from "./routes/archiveRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,5 +30,7 @@ app.use(cookieParser());
 app.use("/", authRoutes);
 app.use("/", profileRoutes);
 app.use("/", notesRouter);
+app.use("/", binRouter);
+app.use("/", archiveRouter);
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
