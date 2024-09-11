@@ -26,7 +26,7 @@ export const register = async (req, res) => {
     user = new User({ username, name, age, email, password });
     await user.save();
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
 
     res.redirect(`/profile/${user.username}`);
@@ -45,7 +45,7 @@ export const login = async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(400).send("Invalid credentials");
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
 
     res.redirect(`/profile/${user.username}`);
