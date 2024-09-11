@@ -5,7 +5,9 @@ import { deleteNote, archiveNote, fetchDeletedNotes, fetchArchivedNotes, addNote
 
 const notesRouter = express.Router();
 
-notesRouter.get("/notes", authMiddleware, async (req, res) => {
+notesRouter.use(authMiddleware);
+
+notesRouter.get("/notes", async (req, res) => {
   try {
     const userId = req.user.id; // Get the user ID from the JWT token
     const user = await User.findById(userId).populate("notes");
@@ -21,22 +23,22 @@ notesRouter.get("/notes", authMiddleware, async (req, res) => {
   }
 });
 
-// route for adding new notes
-notesRouter.post("/addnotes", authMiddleware, addNote);
+// Route for adding new notes
+notesRouter.post("/addnotes", addNote);
 
 // Handle deleting (moving to bin)
-notesRouter.post("/deletenote", authMiddleware, deleteNote);
+notesRouter.post("/deletenote", deleteNote);
 
 // Handle archiving notes
-notesRouter.post("/archivenote", authMiddleware, archiveNote);
+notesRouter.post("/archivenote", archiveNote);
 
 // Retrieve deleted notes (bin)
-notesRouter.get("/bin", authMiddleware, fetchDeletedNotes);
+notesRouter.get("/bin", fetchDeletedNotes);
 
 // Retrieve archived notes
-notesRouter.get("/archive", authMiddleware, fetchArchivedNotes);
+notesRouter.get("/archive", fetchArchivedNotes);
 
-// route for clearing all notes
-// notesRouter.post("/clearall", authMiddleware, clearAllNotes);
+// Route for clearing all notes (example)
+// notesRouter.post("/clearall", clearAllNotes);
 
 export default notesRouter;
