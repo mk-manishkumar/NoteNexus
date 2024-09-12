@@ -53,3 +53,13 @@ export const login = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+
+export const logout = (req, res) => {
+  try {
+    res.clearCookie("token"); 
+    res.redirect("/login"); 
+  } catch (error) {
+    res.status(500).send(err.message);
+  }
+};
+
