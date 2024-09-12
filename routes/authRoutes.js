@@ -1,17 +1,13 @@
 import express from "express";
-import { register, login, logout } from "../controllers/authController.js";
+import { register, login, logout, checkAuth, checkLogin } from "../controllers/authController.js";
 
 const authRouter = express.Router();
 
-// GET route to render the registration page
-authRouter.get("/", (req, res) => {
-  res.render("register");
-});
+// Route to handle redirection to profile page based on authentication status
+authRouter.get("/", checkAuth);
 
 // GET route to render the login page
-authRouter.get("/login", (req, res) => {
-  res.render("login");
-});
+authRouter.get("/login", checkLogin);
 
 // POST route for handling registration logic
 authRouter.post("/", register);

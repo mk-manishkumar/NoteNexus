@@ -26,7 +26,7 @@ export const register = async (req, res) => {
     user = new User({ username, name, age, email, password });
     await user.save();
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
 
     res.redirect(`/profile/${user.username}`);
@@ -45,7 +45,7 @@ export const login = async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(400).send("Invalid credentials");
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
 
     res.redirect(`/profile/${user.username}`);
@@ -56,10 +56,41 @@ export const login = async (req, res) => {
 
 export const logout = (req, res) => {
   try {
-    res.clearCookie("token"); 
-    res.redirect("/login"); 
+    res.clearCookie("token");
+    res.redirect("/login");
   } catch (error) {
     res.status(500).send(err.message);
   }
 };
 
+export const checkAuth = (req, res) => {
+  const token = req.cookies.token;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const username = decoded.username;
+      return res.redirect(`/profile/${username}`);
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid token." });
+    }
+  }
+
+  res.render("register");
+};
+
+export const checkLogin = (req, res) => {
+  const token = req.cookies.token;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const username = decoded.username;
+      return res.redirect(`/profile/${username}`);
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid token." });
+    }
+  }
+
+  res.render("login");
+};
