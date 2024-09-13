@@ -1,24 +1,18 @@
 import express from "express";
-import User from "../models/User.model.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
+import { displayProfile, displayEditProfile, updateProfile } from "../controllers/profileController.js";
 
 const profileRouter = express.Router();
 
-profileRouter.get("/profile/:username", authMiddleware, async (req, res) => {
-  try {
-    const { username } = req.params;
+profileRouter.use(authMiddleware);
 
-    const user = await User.findOne({ username });
+// to display profile page
+profileRouter.get("/profile/:username", displayProfile);
 
-    if (!user) {
-      return res.status(404).send("User not found");
-    }
+// to display edit page
+profileRouter.get("/edit/:username", displayEditProfile);
 
-    res.render("profile", { user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
+// to updated changes in profile
+profileRouter.post("/profile/edit/:username", updateProfile);
 
 export default profileRouter;

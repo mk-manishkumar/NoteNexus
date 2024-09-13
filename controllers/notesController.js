@@ -152,6 +152,7 @@ export const getEditNote = async (req, res) => {
   }
 };
 
+// to update note
 export const updateNote = async (req, res) => {
   try {
     const { slug } = req.params;

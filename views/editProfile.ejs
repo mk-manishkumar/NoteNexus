@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <div class="bg-zinc-900 w-full flex-grow">
+      <nav class="flex justify-between bg-[#CA2B58] text-white p-5">
+        <div class="logo">
+          <a href="/profile/<%= user.username %>" class="text-2xl tracking-tight ml-8 font-[cursive]">NoteNexus</a>
+        </div>
+        <div class="nav-items flex gap-8 mr-8 text-md">
+          <a href="/notes">NOTES</a>
+          <a href="/bin">BIN</a>
+          <a href="/archive">ARCHIVE</a>
+          <form action="/logout" method="post">
+            <button type="submit"><i class="fa-solid fa-right-from-bracket"></i></button>
+          </form>
+        </div>
+      </nav>
+
+      <section class="my-8">
+        <h3 class="text-3xl text-[#CA2B58] ml-5">Edit Profile</h3>
+      </section>
+
+      <div class="edit-list px-5">
+        <form action="/profile/edit/<%= user.username %>" method="post" class="mb-5">
+          <div class="mb-4 flex items-center gap-5">
+            <label for="username" class="text-white w-24">Username</label>
+            <input type="text" name="username" value="<%= user.username %>" class="w-96 bg-zinc-800 text-zinc-400 p-2 rounded-md" required />
+          </div>
+          <div class="mb-4 flex items-center gap-5">
+            <label for="name" class="text-white w-24">Name</label>
+            <input type="text" name="name" value="<%= user.name %>" class="w-96 bg-zinc-800 text-zinc-400 p-2 rounded-md" required />
+          </div>
+          <div class="mb-4 flex items-center gap-5">
+            <label for="email" class="text-white w-24">Email</label>
+            <input type="text" name="email" value="<%= user.email %>" class="w-96 bg-zinc-800 text-zinc-400 p-2 rounded-md" required />
+          </div>
+          <div class="mb-4 flex items-center gap-5">
+            <label for="age" class="text-white w-24">Age</label>
+            <input type="number" name="age" value="<%= user.age %>" class="w-96 bg-zinc-800 text-zinc-400 p-2 rounded-md" required />
+          </div>
+          <button type="submit" class="bg-yellow-500 text-black px-4 py-2 rounded-md mt-5">Save Changes</button>
+        </form>
+        <a href="" class="text-blue-500 mr-5 underline">Click here to change password</a>
+        <a href="" class="text-blue-500 underline"> Click here to delete your profile</a>
+      </div>
+    </div>
+
+    <footer class="bg-[#CA2B58] p-4">
+      <p class="text-center text-white text-xl tracking-tight">NoteNexus &copy; 2024</p>
+    </footer>
+  </body>
+</html>
