@@ -110,3 +110,63 @@ export const clearAllNotes = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+
+// to open each note separately
+export const openNote = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    // Find the note by its slug and user ID
+    const note = await Notes.findOne({ slug, user: userId });
+
+    if (!note) {
+      return res.status(404).send("Note not found");
+    }
+
+    res.render("noteDetail", { note, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+};
+
+// to display edit page
+export const getEditNote = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    const note = await Notes.findOne({ slug, user: userId });
+
+    if (!note) {
+      return res.status(404).send("Note not found");
+    }
+
+    res.render("editNote", { note, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+};
+
+export const updateNote = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const { title, description } = req.body;
+    const userId = req.user.id;
+
+    const updatedNote = await Notes.findOneAndUpdate({ slug, user: userId }, { $set: { title, description } }, { new: true });
+
+    if (!updatedNote) {
+      return res.status(404).send("Note not found or not owned by user");
+    }
+
+    res.redirect(`/notes/${updatedNote.slug}`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+};

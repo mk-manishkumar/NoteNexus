@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Note</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <div class="bg-zinc-900 w-full flex-grow">
+      <nav class="flex justify-between bg-[#CA2B58] text-white p-5">
+        <div class="logo">
+          <a href="/profile/<%= user.username %>" class="text-2xl tracking-tight ml-8 font-[cursive]">NoteNexus</a>
+        </div>
+      </nav>
+
+      <div class="notes p-5 w-[77rem] mx-auto text-white">
+        <h2 class="my-8 text-3xl tracking-tight text-green-500 font-bold">Edit Note</h2>
+        <form action="/notes/edit/<%= note.slug %>" method="post">
+          <div class="mb-4">
+            <label for="title" class="block mb-2">Title</label>
+            <input type="text" id="title" name="title" value="<%= note.title %>" class="w-full bg-zinc-800 text-zinc-400 p-2 rounded-md" required />
+          </div>
+          <div class="mb-4">
+            <label for="description" class="block mb-2">Description</label>
+            <textarea id="description" name="description" rows="8" class="w-full p-2 rounded-md bg-zinc-800 text-zinc-400" required><%= note.description %></textarea>
+          </div>
+          <button type="submit" class="bg-yellow-500 text-black px-4 py-2 rounded-md">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="bg-[#CA2B58] p-4">
+      <p class="text-center text-white text-xl tracking-tight">NoteNexus &copy; 2024</p>
+    </footer>
+  </body>
+</html>

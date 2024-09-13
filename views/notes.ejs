@@ -35,7 +35,7 @@
         <ul class="list-none flex gap-5 flex-wrap justify-between">
           <% notes.forEach(note => { %>
           <li class="p-4 mb-2 rounded-md w-96 overflow-hidden bg-zinc-800 text-zinc-400">
-            <a class="font-bold text-2xl mb-2 inline-block text-blue-500" href=""><%= note.title %></a>
+            <a class="font-bold text-2xl mb-2 inline-block text-blue-500" href="/notes/<%= note.slug %>"><%= note.title %></a>
             <p class="h-24 overflow-hidden"><%= note.description %></p>
             <div class="btns mt-5 flex justify-between">
               <!-- Form for deleting the note (moving to bin) -->

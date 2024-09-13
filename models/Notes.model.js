@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
 
 const notesSchema = new mongoose.Schema(
   {
@@ -16,6 +17,10 @@ const notesSchema = new mongoose.Schema(
       minlength: 1,
       maxlength: 5000,
     },
+    slug: {
+      type: String,
+      unique: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -28,6 +33,14 @@ const notesSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Pre-save hook to generate slug from title
+notesSchema.pre("save", function (next) {
+  if (this.isModified("title")) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+  next();
+});
 
 // Optional: Add an index if you need to search by title frequently
 notesSchema.index({ title: 1 });
