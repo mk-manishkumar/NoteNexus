@@ -1,6 +1,6 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js";
-import { displayProfile, displayEditProfile, updateProfile } from "../controllers/profileController.js";
+import { displayProfile, displayEditProfile, updateProfile, changePassword, updatePassword } from "../controllers/profileController.js";
 
 const profileRouter = express.Router();
 
@@ -14,5 +14,11 @@ profileRouter.get("/edit/:username", displayEditProfile);
 
 // to updated changes in profile
 profileRouter.post("/profile/edit/:username", updateProfile);
+
+// to display change password page
+profileRouter.get("/:username/change-password", changePassword);
+
+// to update password
+profileRouter.post("/:username/update-password", updatePassword);
 
 export default profileRouter;
