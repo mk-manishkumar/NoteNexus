@@ -90,13 +90,7 @@ export const updatePassword = async (req, res) => {
     // Update the user's password
     user.password = hashedPassword;
 
-    let match = await bcrypt.compare(newPassword, user.password);
-    console.log(match);
-    console.log(hashedPassword);
-    console.log(user.password);
-
     await user.save();
-    console.log(user.password);
 
     res.clearCookie("token");
 
