@@ -1,6 +1,6 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js";
-import { deleteNote, archiveNote, fetchDeletedNotes, fetchArchivedNotes, addNote, fetchNotes, clearAllNotes, openNote, getEditNote, updateNote } from "../controllers/notesController.js";
+import { deleteNote, archiveNote, fetchDeletedNotes, fetchArchivedNotes, addNote, fetchNotes, clearAllNotes, openNote, getEditNote, updateNote, searchNotes } from "../controllers/notesController.js";
 
 const notesRouter = express.Router();
 
@@ -35,5 +35,8 @@ notesRouter.get("/notes/edit/:slug", getEditNote);
 
 // Route to handle the note update
 notesRouter.post("/notes/edit/:slug", updateNote);
+
+// ROute for searching a particular note
+notesRouter.get("/notes/search-notes", searchNotes);
 
 export default notesRouter;
