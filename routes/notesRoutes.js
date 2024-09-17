@@ -37,6 +37,6 @@ notesRouter.get("/notes/edit/:slug", getEditNote);
 notesRouter.post("/notes/edit/:slug", updateNote);
 
 // ROute for searching a particular note
-notesRouter.get("/notes/search-notes", searchNotes);
+notesRouter.get("/search-notes", searchNotes);
 
 export default notesRouter;

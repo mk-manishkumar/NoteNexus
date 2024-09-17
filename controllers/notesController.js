@@ -175,17 +175,23 @@ export const updateNote = async (req, res) => {
 // to search notes
 export const searchNotes = async (req, res) => {
   try {
-    const { query } = req.query;
+    const { search } = req.query;
     const userId = req.user.id;
 
-    if (!query) {
+    if (!search) {
       return res.status(400).send("Please enter a search query.");
     }
 
     const notes = await Notes.find({
       user: userId,
-      $or: [{ title: { $regex: query, $options: "i" } }, { description: { $regex: query, $options: "i" } }],
+      isArchived: false,
+      isDeleted: false,
+      $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
+
+    if (notes.length === 0) {
+      return res.status(404).send("No notes found");
+    }
 
     res.render("notes", { user: req.user, notes });
   } catch (err) {

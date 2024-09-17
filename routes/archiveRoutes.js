@@ -1,6 +1,6 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js";
-import { deleteFromArchive, restoreFromArchive, clearArchive } from "../controllers/archiveController.js"; 
+import { deleteFromArchive, restoreFromArchive, clearArchive, searchArchive } from "../controllers/archiveController.js";
 
 const archiveRouter = express.Router();
 
@@ -14,5 +14,8 @@ archiveRouter.post("/restorfromarchive", restoreFromArchive);
 
 // Route to clear all notes from the archive
 archiveRouter.post("/cleararchive", clearArchive);
+
+// Route to search notes in archive section
+archiveRouter.get("/search-archived-notes", searchArchive);
 
 export default archiveRouter;
