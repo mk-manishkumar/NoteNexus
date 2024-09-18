@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= user.name %></title>
+    <!-- tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- javascript file -->
+    <script src="../javascripts/script.js"></script>
+    <!-- font awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
   </head>
   <body class="flex flex-col min-h-screen">
@@ -13,7 +17,15 @@
         <div class="logo">
           <h1 class="text-2xl tracking-tight ml-8 font-[cursive]">NoteNexus</h1>
         </div>
-        <div class="nav-items flex gap-8 mr-8 text-md">
+
+        <!-- Hamburger Icon (hidden on md and above) -->
+        <div class="hamburger md:hidden flex items-center mr-8">
+          <button id="menu-toggle">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </button>
+        </div>
+
+        <div class="nav-items md:flex gap-8 mr-8 text-md hidden">
           <a href="/notes">NOTES</a>
           <a href="/bin">BIN</a>
           <a href="/archive">ARCHIVE</a>
@@ -21,20 +33,30 @@
             <button type="submit"><i class="fa-solid fa-right-from-bracket"></i></button>
           </form>
         </div>
+
+        <!-- Mobile Menu (for small screens) -->
+        <div id="mobile-menu" class="hidden flex-col gap-4 mt-4 bg-[#CA2B58] md:hidden">
+          <a href="/notes">NOTES</a>
+          <a href="/bin">BIN</a>
+          <a href="/archive">ARCHIVE</a>
+          <form action="/logout" method="post">
+            <button type="submit">LOG OUT</button>
+          </form>
+        </div>
       </nav>
 
-      <section class="my-8 flex justify-between mx-8">
+      <section class="my-8 flex flex-col gap-4 items-center justify-between mx-8 sm:flex-row">
         <h3 class="text-white text-2xl">Hello, <span class="text-[#CA2B58]"><%= user.name %></span></h3>
         <a href="/edit/<%= user.username %>" class="bg-[#CA2B58] text-white px-4 py-2 rounded-md">Edit Profile</a>
       </section>
 
       <!-- form -->
-      <form action="/addnotes" method="post" class="mt-12 flex flex-col items-center">
-        <input class="block w-1/3 bg-zinc-800 mb-4 rounded-md px-5 py-4 outline-none text-zinc-400" type="text" placeholder="Enter Title" name="title" required />
+      <form action="/addnotes" method="post" class="mt-12 flex flex-col items-center px-5">
+        <input class="block w-full bg-zinc-800 mb-4 rounded-md px-5 py-4 outline-none text-zinc-400 lg:w-1/3" type="text" placeholder="Enter Title" name="title" required />
 
-        <textarea name="description" placeholder="Enter description" class="mb-4 block w-1/3 h-52 rounded-md outline-none px-5 py-2 bg-zinc-800 resize-none text-zinc-400" required></textarea>
+        <textarea name="description" placeholder="Enter description" class="mb-4 block w-full h-52 rounded-md outline-none px-5 py-2 bg-zinc-800 resize-none text-zinc-400 lg:w-1/3" required></textarea>
 
-        <input class="bg-blue-500 text-white w-1/3 rounded-md px-4 py-2 mb-3" type="submit" value="Add Note" />
+        <input class="bg-blue-500 text-white w-full rounded-md px-4 py-2 mb-3 lg:w-1/3" type="submit" value="Add Note" />
 
         <a class="text-blue-500" href="/notes">Click here to see Notes.</a>
       </form>
