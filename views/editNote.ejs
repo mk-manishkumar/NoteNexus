@@ -4,7 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Note</title>
+    <!-- css file -->
+    <link rel="stylesheet" href="../stylesheets/style.css" />
+    <!-- tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
   </head>
   <body class="flex flex-col min-h-screen">
     <div class="bg-zinc-900 w-full flex-grow">
@@ -12,18 +17,44 @@
         <div class="logo">
           <a href="/profile/<%= user.username %>" class="text-2xl tracking-tight ml-8 font-[cursive]">NoteNexus</a>
         </div>
+
+        <!-- Hamburger Icon (hidden on md and above) -->
+        <div class="hamburger md:hidden flex items-center mr-8">
+          <button id="menu-toggle">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </button>
+        </div>
+
+        <div class="nav-items md:flex gap-8 mr-8 text-md hidden">
+          <a href="/notes">NOTES</a>
+          <a href="/bin">BIN</a>
+          <a href="/archive">ARCHIVE</a>
+          <form action="/logout" method="post">
+            <button type="submit"><i class="fa-solid fa-right-from-bracket"></i></button>
+          </form>
+        </div>
+
+        <!-- Mobile Menu (for small screens) -->
+        <div id="mobile-menu" class="hidden flex-col gap-4 mt-4 bg-[#CA2B58] md:hidden">
+          <a href="/notes">NOTES</a>
+          <a href="/bin">BIN</a>
+          <a href="/archive">ARCHIVE</a>
+          <form action="/logout" method="post">
+            <button type="submit">LOG OUT</button>
+          </form>
+        </div>
       </nav>
 
-      <div class="notes p-5 w-[77rem] mx-auto text-white">
+      <div class="notes p-5 mx-auto text-white">
         <h2 class="my-8 text-3xl tracking-tight text-green-500 font-bold">Edit Note</h2>
         <form action="/notes/edit/<%= note.slug %>" method="post">
           <div class="mb-4">
             <label for="title" class="block mb-2">Title</label>
-            <input type="text" id="title" name="title" value="<%= note.title %>" class="w-full bg-zinc-800 text-zinc-400 p-2 rounded-md" required />
+            <input type="text" name="title" value="<%= note.title %>" class="w-full bg-zinc-800 text-zinc-400 p-2 rounded-md outline-none" required />
           </div>
           <div class="mb-4">
             <label for="description" class="block mb-2">Description</label>
-            <textarea id="description" name="description" rows="8" class="w-full p-2 rounded-md bg-zinc-800 text-zinc-400" required><%= note.description %></textarea>
+            <textarea id="description" name="description" class="w-full p-2 rounded-md bg-zinc-800 text-zinc-400 outline-none resize-none h-52" required><%= note.description %></textarea>
           </div>
           <button type="submit" class="bg-yellow-500 text-black px-4 py-2 rounded-md">Save Changes</button>
         </form>
