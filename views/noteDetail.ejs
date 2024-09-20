@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="../stylesheets/style.css" />
     <!-- tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- javascript file -->
+    <script src="../javascripts/script.js" defer></script>
     <!-- font awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
   </head>
@@ -20,7 +22,7 @@
 
         <!-- Hamburger Icon (hidden on md and above) -->
         <div class="hamburger md:hidden flex items-center mr-8">
-          <button id="menu-toggle">
+          <button class="menu-toggle">
             <i class="fa-solid fa-bars text-2xl"></i>
           </button>
         </div>
@@ -33,17 +35,17 @@
             <button type="submit"><i class="fa-solid fa-right-from-bracket"></i></button>
           </form>
         </div>
-
-        <!-- Mobile Menu (for small screens) -->
-        <div id="mobile-menu" class="hidden flex-col gap-4 mt-4 bg-[#CA2B58] md:hidden">
-          <a href="/notes">NOTES</a>
-          <a href="/bin">BIN</a>
-          <a href="/archive">ARCHIVE</a>
-          <form action="/logout" method="post">
-            <button type="submit">LOG OUT</button>
-          </form>
-        </div>
       </nav>
+
+      <!-- Mobile Menu (for small screens) -->
+      <div class="hidden flex text-xl font-semibold justify-between p-4 text-white bg-blue-500 md:hidden mobile-menu">
+        <a href="/notes">NOTES</a>
+        <a href="/bin">BIN</a>
+        <a href="/archive">ARCHIVE</a>
+        <form action="/logout" method="post">
+          <button type="submit">LOG OUT</button>
+        </form>
+      </div>
 
       <div class="notes p-5 mx-auto text-white text-center">
         <h2 class="my-8 text-3xl tracking-tight text-green-500 font-bold"><%= note.title %></h2>
