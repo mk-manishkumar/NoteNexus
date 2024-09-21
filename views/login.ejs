@@ -16,10 +16,14 @@
       </section>
       <!-- form -->
       <form action="/login" method="post" class="mt-12 flex flex-col items-center px-4">
-        
         <input class="block w-full sm:w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400" type="email" placeholder="Enter email" name="email" required />
-        
+
         <input class="block w-full sm:w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400" type="password" placeholder="Enter password" name="password" required />
+
+        <!-- Display error message if present -->
+        <% if (error) { %>
+        <p class="text-red-500 mb-4"><%= error %></p>
+        <% } %>
 
         <input class="bg-blue-500 text-white w-full sm:w-96 rounded-md px-4 py-2 mb-3" type="submit" value="Login" />
 

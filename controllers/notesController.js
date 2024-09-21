@@ -21,17 +21,32 @@ export const addNote = async (req, res) => {
     const { title, description } = req.body;
 
     if (!title || !description) {
-      return res.status(400).json({ message: "Title and description are required" });
+      return res.status(400).render("profile", { error: "Title and description are required" });
     }
 
     const newNote = new Notes({ title, description, user: userId });
-    await newNote.save();
+
+    try {
+      await newNote.validate();
+      await newNote.save();
+    } catch (validationError) {
+      // Catch validation errors (like exceeding max length)
+      if (validationError.name === "ValidationError") {
+        const errorMessage = Object.values(validationError.errors)
+          .map((err) => err.message)
+          .join(", ");
+        return res.status(400).render("profile", { user: req.user, error: errorMessage });
+      }
+      // Throw if it's not a validation error, re-throwing the error to the outer catch block.
+      throw validationError;
+    }
+
     await User.findByIdAndUpdate(userId, { $push: { notes: newNote._id } });
 
     res.redirect("/notes");
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).render("error");
   }
 };
 

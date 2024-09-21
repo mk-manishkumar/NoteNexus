@@ -11,7 +11,7 @@ export const displayProfile = async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    res.render("profile", { user });
+    res.render("profile", { user, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);

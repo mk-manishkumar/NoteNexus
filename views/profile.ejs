@@ -58,7 +58,12 @@
 
         <textarea name="description" placeholder="Enter description" class="mb-4 block w-full h-52 rounded-md outline-none px-5 py-2 bg-zinc-800 resize-none text-zinc-400 lg:w-1/3" required></textarea>
 
-        <input class="bg-blue-500 text-white w-full rounded-md px-4 py-2 mb-3 lg:w-1/3" type="submit" value="Add Note" />
+        <!-- Display error message if present -->
+        <% if (error) { %>
+        <p class="text-red-500 mb-4"><%= error %></p>
+        <% } %>
+
+        <input class="bg-blue-500 text-white w-full rounded-md px-4 py-2 mb-3 lg:w-1/3 cursor-pointer" type="submit" value="Add Note" />
 
         <a class="text-blue-500" href="/notes">Click here to see Notes.</a>
       </form>
