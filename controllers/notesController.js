@@ -21,7 +21,7 @@ export const addNote = async (req, res) => {
     const { title, description } = req.body;
 
     if (!title || !description) {
-      return res.status(400).render("profile", { error: "Title and description are required" });
+      return res.status(400).render("profile", { user: req.user, error: "Title and description are required" });
     }
 
     const newNote = new Notes({ title, description, user: userId });
