@@ -1,24 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.model.js";
-import { z } from "zod";
-
-// Register validation schema with Zod
-const registerSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  name: z.string().min(3, "Name must be at least 3 characters").max(30, "Name must be less than or equal to 30 characters"),
-  age: z.preprocess((value) => {
-    // Convert value to a number, if possible
-    const num = Number(value);
-    return Number.isNaN(num) ? undefined : num;
-  }, z.number().min(11, "Age must be at least 11").max(150, "Age must be less than or equal to 150")),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(4, "Password must be at least 4 characters"),
-});
+import { userRegisterSchema } from "../utils/zodValidation.js";
 
 export const register = async (req, res) => {
   try {
-    const { username, name, age, email, password } = registerSchema.parse(req.body);
+    const { username, name, age, email, password } = userRegisterSchema.parse(req.body);
 
     let user = await User.findOne({ email });
     if (user) {

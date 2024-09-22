@@ -54,6 +54,11 @@
         </form>
       </div>
 
+      <!-- Display error message if present -->
+      <% if (error) { %>
+      <p class="text-red-500 mt-2 mb-4 text-center"><%= error %></p>
+      <% } %>
+
       <section class="my-8 mx-5 flex flex-col sm:flex-row text-center gap-4 justify-between">
         <h3 class="text-white text-2xl">Here are your deleted notes...</h3>
         <form action="/clearbin" method="post">

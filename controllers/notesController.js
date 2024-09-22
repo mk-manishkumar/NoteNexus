@@ -7,7 +7,7 @@ export const fetchNotes = async (req, res) => {
     const userId = req.user.id;
     const user = await User.findById(userId);
     const activeNotes = await Notes.find({ user: userId, isDeleted: false, isArchived: false });
-    res.render("notes", { notes: activeNotes, user });
+    res.render("notes", { notes: activeNotes, user, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -94,7 +94,7 @@ export const fetchDeletedNotes = async (req, res) => {
     const userId = req.user.id;
     const user = await User.findById(userId);
     const deletedNotes = await Notes.find({ user: userId, isDeleted: true });
-    res.render("bin", { notes: deletedNotes, user });
+    res.render("bin", { notes: deletedNotes, user, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -107,7 +107,7 @@ export const fetchArchivedNotes = async (req, res) => {
     const userId = req.user.id;
     const user = await User.findById(userId);
     const archivedNotes = await Notes.find({ user: userId, isArchived: true });
-    res.render("archive", { notes: archivedNotes, user });
+    res.render("archive", { notes: archivedNotes, user, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -160,7 +160,7 @@ export const getEditNote = async (req, res) => {
       return res.status(404).send("Note not found");
     }
 
-    res.render("editNote", { note, user });
+    res.render("editNote", { note, user, error: "" });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
@@ -174,16 +174,32 @@ export const updateNote = async (req, res) => {
     const { title, description } = req.body;
     const userId = req.user.id;
 
-    const updatedNote = await Notes.findOneAndUpdate({ slug, user: userId }, { $set: { title, description } }, { new: true });
-
-    if (!updatedNote) {
-      return res.status(404).send("Note not found or not owned by user");
+    if (!title || !description) {
+      return res.status(400).render("editNote", { user: req.user, error: "Title and description are required" });
     }
 
-    res.redirect(`/notes/${updatedNote.slug}`);
+    const note = await Notes.findOne({ slug, user: userId });
+
+    note.title = title;
+    note.description = description;
+
+    try {
+      await note.validate();
+      await note.save();
+    } catch (validationError) {
+      if (validationError.name === "ValidationError") {
+        const errorMessage = Object.values(validationError.errors)
+          .map((err) => err.message)
+          .join(", ");
+        return res.status(400).render("editNote", { user: req.user, note, error: errorMessage });
+      }
+      throw validationError;
+    }
+
+    res.redirect(`/notes/${note.slug}`);
   } catch (error) {
     console.error(error);
-    res.status(500).send(error.message);
+    res.status(500).render("error");
   }
 };
 
@@ -193,10 +209,6 @@ export const searchNotes = async (req, res) => {
     const { search } = req.query;
     const userId = req.user.id;
 
-    if (!search) {
-      return res.status(400).send("Please enter a search query.");
-    }
-
     const notes = await Notes.find({
       user: userId,
       isArchived: false,
@@ -204,11 +216,15 @@ export const searchNotes = async (req, res) => {
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
-    if (notes.length === 0) {
-      return res.status(404).send("No notes found");
+    if (!search) {
+      return res.status(400).render("notes", { user: req.user, notes, error: "Please enter a search query." });
     }
 
-    res.render("notes", { user: req.user, notes });
+    if (notes.length === 0) {
+      return res.status(404).render("notes", { user: req.user, notes, error: "No notes found" });
+    }
+
+    res.render("notes", { user: req.user, notes, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);

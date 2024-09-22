@@ -57,6 +57,12 @@
 
         <form action="/<%= user.username %>/delete-profile" method="post" class="mt-5 flex flex-col items-center">
           <input type="password" name="password" class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-zinc-800 text-zinc-400 outline-none px-4 py-2 rounded-md" placeholder="Enter Password" required />
+
+          <!-- Display error message if present -->
+          <% if (error) { %>
+          <p class="text-red-500 mb-4"><%= error %></p>
+          <% } %>
+          
           <button type="submit" class="bg-red-700 px-4 py-1 rounded-md mt-5 block">Delete</button>
         </form>
       </div>

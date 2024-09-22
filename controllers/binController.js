@@ -62,10 +62,6 @@ export const searchBin = async (req, res) => {
     const { search } = req.query;
     const userId = req.user.id;
 
-    if (!search) {
-      return res.status(400).send("Please enter a search query.");
-    }
-
     const notes = await Notes.find({
       user: userId,
       isArchived: false,
@@ -73,11 +69,15 @@ export const searchBin = async (req, res) => {
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
-    if (notes.length === 0) {
-      return res.status(404).send("No notes found");
+    if (!search) {
+      return res.status(400).render("bin", { error: "Please enter a search query.", user: req.user, notes });
     }
 
-    res.render("bin", { user: req.user, notes });
+    if (notes.length === 0) {
+      return res.status(404).render("bin", { error: "No notes found", user: req.user, notes });
+    }
+
+    res.render("bin", { user: req.user, notes, error: "" });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);

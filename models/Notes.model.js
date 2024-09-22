@@ -8,14 +8,14 @@ const notesSchema = new mongoose.Schema(
       required: [true, "Title is required"],
       trim: true,
       minlength: 1,
-      maxlength: [50, "Title cannot exceed 100 characters"],
+      maxlength: [50, "Title cannot exceed 50 characters"],
     },
     description: {
       type: String,
       required: [true, "Description is required"],
       trim: true,
       minlength: 1,
-      maxlength: [5000, "Description cannot exceed 500 characters"],
+      maxlength: [5000, "Description cannot exceed 5000 characters"],
     },
     slug: {
       type: String,

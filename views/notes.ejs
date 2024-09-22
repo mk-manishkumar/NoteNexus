@@ -54,6 +54,11 @@
         </form>
       </div>
 
+      <!-- Display error message if present -->
+      <% if (error) { %>
+      <p class="text-red-500 mt-2 mb-4 text-center"><%= error %></p>
+      <% } %>
+
       <section class="my-8 mx-5 flex flex-col sm:flex-row gap-4 text-center justify-between">
         <h3 class="text-white text-2xl">Your notes are here, <span class="text-[#CA2B58]"><%= user.name %></span></h3>
         <form action="/clearnotes" method="post">
