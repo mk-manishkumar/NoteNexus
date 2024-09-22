@@ -66,9 +66,9 @@
         </form>
       </section>
 
-      <div class="notes p-5 mx-auto">
+      <div class="notes p-5 w-full xl:w-[77rem] mx-auto">
         <% if (notes.length > 0) { %>
-        <ul class="list-none flex gap-5 flex-wrap justify-center lg:justify-between">
+        <ul class="list-none flex gap-5 flex-wrap justify-center xl:justify-start">
           <% notes.forEach(note => { %>
           <li class="p-4 mb-2 rounded-md w-96 overflow-hidden bg-zinc-800 text-zinc-400">
             <a class="font-bold text-2xl mb-2 inline-block text-blue-500" href="/notes/<%= note.slug %>"><%= note.title %></a>
