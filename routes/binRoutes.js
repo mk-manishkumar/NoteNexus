@@ -1,10 +1,13 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js";
-import { restoreFromBin, deleteFromBin, clearBin, searchBin } from "../controllers/binController.js";
+import { fetchDeletedNotes, restoreFromBin, deleteFromBin, clearBin, searchBin } from "../controllers/binController.js";
 
 const binRouter = express.Router();
 
 binRouter.use(authMiddleware);
+
+// to fetch bin page
+binRouter.get("/", fetchDeletedNotes);
 
 // Route to restore a note from bin
 binRouter.post("/restorefrombin", restoreFromBin);

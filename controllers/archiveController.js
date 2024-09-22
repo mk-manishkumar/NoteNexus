@@ -1,4 +1,18 @@
 import Notes from "../models/Notes.model.js";
+import User from "../models/User.model.js";
+
+// Fetch Archived Notes
+export const fetchArchivedNotes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const archivedNotes = await Notes.find({ user: userId, isArchived: true });
+    res.render("archive", { notes: archivedNotes, user, error: "" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+};
 
 // Delete a note
 export const deleteFromArchive = async (req, res) => {
@@ -50,6 +64,10 @@ export const searchArchive = async (req, res) => {
     const { search } = req.query;
     const userId = req.user.id;
 
+    if (!search) {
+      return res.status(400).render("archive", { error: "Please enter a search query.", user: req.user, notes: [] });
+    }
+
     const notes = await Notes.find({
       user: userId,
       isArchived: true,
@@ -57,12 +75,8 @@ export const searchArchive = async (req, res) => {
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
-    if (!search) {
-      return res.status(400).render("archive", { error: "Please enter a search query.", user: req.user, notes });
-    }
-
     if (notes.length === 0) {
-      return res.status(404).render("archive", { error: "No notes found", user: req.user, notes });
+      return res.status(404).render("archive", { error: "No notes found", user: req.user, notes: [] });
     }
 
     res.render("archive", { user: req.user, notes, error: "" });

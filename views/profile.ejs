@@ -49,11 +49,11 @@
 
       <section class="my-8 flex flex-col gap-4 items-center justify-between mx-8 sm:flex-row">
         <h3 class="text-white text-2xl">Hello, <span class="text-[#CA2B58]"><%= user.name %></span></h3>
-        <a href="/edit/<%= user.username %>" class="bg-[#CA2B58] text-white px-4 py-2 rounded-md">Edit Profile</a>
+        <a href="/profile/edit/<%= user.username %>" class="bg-[#CA2B58] text-white px-4 py-2 rounded-md">Edit Profile</a>
       </section>
 
       <!-- form -->
-      <form action="/addnotes" method="post" class="mt-12 flex flex-col items-center px-5">
+      <form action="/notes/addnotes" method="post" class="mt-12 flex flex-col items-center px-5">
         <input class="block w-full bg-zinc-800 mb-4 rounded-md px-5 py-4 outline-none text-zinc-400 lg:w-1/3" type="text" placeholder="Enter Title" name="title" required />
 
         <textarea name="description" placeholder="Enter description" class="mb-4 block w-full h-52 rounded-md outline-none px-5 py-2 bg-zinc-800 resize-none text-zinc-400 lg:w-1/3" required></textarea>

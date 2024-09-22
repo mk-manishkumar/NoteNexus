@@ -1,6 +1,19 @@
 import Notes from "../models/Notes.model.js";
 import User from "../models/User.model.js";
 
+// Fetch Deleted Notes (Bin)
+export const fetchDeletedNotes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const deletedNotes = await Notes.find({ user: userId, isDeleted: true });
+    res.render("bin", { notes: deletedNotes, user, error: "" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+};
+
 export const restoreFromBin = async (req, res) => {
   try {
     const { noteId } = req.body;
@@ -62,6 +75,10 @@ export const searchBin = async (req, res) => {
     const { search } = req.query;
     const userId = req.user.id;
 
+    if (!search) {
+      return res.status(400).render("bin", { error: "Please enter a search query.", user: req.user, notes: [] });
+    }
+
     const notes = await Notes.find({
       user: userId,
       isArchived: false,
@@ -69,12 +86,8 @@ export const searchBin = async (req, res) => {
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
-    if (!search) {
-      return res.status(400).render("bin", { error: "Please enter a search query.", user: req.user, notes });
-    }
-
     if (notes.length === 0) {
-      return res.status(404).render("bin", { error: "No notes found", user: req.user, notes });
+      return res.status(404).render("bin", { error: "No notes found", user: req.user, notes: [] });
     }
 
     res.render("bin", { user: req.user, notes, error: "" });

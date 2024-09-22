@@ -48,7 +48,7 @@
       </div>
 
       <div class="search-bar text-center mt-5 px-5">
-        <form action="/search-archived-notes" method="get">
+        <form action="/archive/search-archived-notes" method="get">
           <input type="search" name="search" class="w-full sm:w-96 px-4 py-2 rounded-3xl text-black outline-none" placeholder="Search for notes..." />
           <button type="submit" class="searchIcon"><i class="fa-solid fa-magnifying-glass text-black"></i></button>
         </form>
@@ -61,7 +61,7 @@
 
       <section class="my-8 mx-5 flex flex-col sm:flex-row text-center gap-4 justify-between">
         <h3 class="text-white text-2xl">Here are your archived notes...</h3>
-        <form action="/cleararchive" method="post">
+        <form action="/archive/cleararchive" method="post">
           <button type="submit" class="bg-[#CA2B58] px-4 py-2 text-white rounded-md">Clear All</button>
         </form>
       </section>
@@ -76,13 +76,13 @@
 
             <div class="btns mt-5 flex justify-between">
               <!-- Form to restore note -->
-              <form action="/restorfromarchive" method="POST" class="inline">
+              <form action="/archive/restorfromarchive" method="POST" class="inline">
                 <input type="hidden" name="noteId" value="<%= note._id %>" />
                 <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Restore</button>
               </form>
 
               <!-- Form to permanently delete note -->
-              <form action="/deletefromarchive" method="POST" class="inline">
+              <form action="/archive/deletefromarchive" method="POST" class="inline">
                 <input type="hidden" name="noteId" value="<%= note._id %>" />
                 <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
               </form>

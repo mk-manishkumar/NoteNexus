@@ -31,10 +31,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Use routes
 app.use("/", authRoutes);
-app.use("/", profileRoutes);
-app.use("/", notesRouter);
-app.use("/", binRouter);
-app.use("/", archiveRouter);
+app.use("/profile", profileRoutes);
+app.use("/notes", notesRouter);
+app.use("/bin", binRouter);
+app.use("/archive", archiveRouter);
 
 // Handle 404 errors (not found)
 app.use((req, res, next) => {

@@ -88,32 +88,6 @@ export const archiveNote = async (req, res) => {
   }
 };
 
-// Fetch Deleted Notes (Bin)
-export const fetchDeletedNotes = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const user = await User.findById(userId);
-    const deletedNotes = await Notes.find({ user: userId, isDeleted: true });
-    res.render("bin", { notes: deletedNotes, user, error: "" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-};
-
-// Fetch Archived Notes
-export const fetchArchivedNotes = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const user = await User.findById(userId);
-    const archivedNotes = await Notes.find({ user: userId, isArchived: true });
-    res.render("archive", { notes: archivedNotes, user, error: "" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-};
-
 // Clear All notes
 export const clearAllNotes = async (req, res) => {
   try {
@@ -208,6 +182,13 @@ export const searchNotes = async (req, res) => {
   try {
     const { search } = req.query;
     const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    // console.log(req.user);
+
+    if (!search) {
+      return res.status(400).render("notes", { error: "Please enter a search query.", user, notes: [] });
+    }
 
     const notes = await Notes.find({
       user: userId,
@@ -216,15 +197,11 @@ export const searchNotes = async (req, res) => {
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
-    if (!search) {
-      return res.status(400).render("notes", { user: req.user, notes, error: "Please enter a search query." });
-    }
-
     if (notes.length === 0) {
-      return res.status(404).render("notes", { user: req.user, notes, error: "No notes found" });
+      return res.status(404).render("notes", { error: "No notes found", user, notes: [] });
     }
 
-    res.render("notes", { user: req.user, notes, error: "" });
+    res.render("notes", { user, notes, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);

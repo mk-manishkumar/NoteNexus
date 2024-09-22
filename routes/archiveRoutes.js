@@ -1,10 +1,13 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js";
-import { deleteFromArchive, restoreFromArchive, clearArchive, searchArchive } from "../controllers/archiveController.js";
+import { fetchArchivedNotes, deleteFromArchive, restoreFromArchive, clearArchive, searchArchive } from "../controllers/archiveController.js";
 
 const archiveRouter = express.Router();
 
 archiveRouter.use(authMiddleware);
+
+// to fetch archive page
+archiveRouter.get("/", fetchArchivedNotes);
 
 // Route to archive a note
 archiveRouter.post("/deletefromarchive", deleteFromArchive);
