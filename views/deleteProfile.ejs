@@ -7,7 +7,7 @@
     <!-- css file -->
     <link rel="stylesheet" href="/stylesheets/style.css" />
     <!-- tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/stylesheets/tailwind.css" />
     <!-- javascript file -->
     <script src="/javascripts/script.js" defer></script>
     <!-- font awesome -->
@@ -38,13 +38,15 @@
       </nav>
 
       <!-- Mobile Menu (for small screens) -->
-      <div class="hidden flex text-xl font-semibold justify-between p-4 text-white bg-blue-500 md:hidden mobile-menu">
-        <a href="/notes">NOTES</a>
-        <a href="/bin">BIN</a>
-        <a href="/archive">ARCHIVE</a>
-        <form action="/logout" method="post">
-          <button type="submit">LOG OUT</button>
-        </form>
+      <div class="hidden mobile-menu">
+        <div class="flex text-xl font-semibold justify-between p-4 text-white bg-blue-500 md:hidden">
+          <a href="/notes">NOTES</a>
+          <a href="/bin">BIN</a>
+          <a href="/archive">ARCHIVE</a>
+          <form action="/logout" method="post">
+            <button type="submit">LOG OUT</button>
+          </form>
+        </div>
       </div>
 
       <section class="my-8">
@@ -62,7 +64,7 @@
           <% if (error) { %>
           <p class="text-red-500 mb-4"><%= error %></p>
           <% } %>
-          
+
           <button type="submit" class="bg-red-700 px-4 py-1 rounded-md mt-5 block">Delete</button>
         </form>
       </div>
