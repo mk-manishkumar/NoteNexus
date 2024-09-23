@@ -42,7 +42,7 @@ notesSchema.pre("save", function (next) {
   next();
 });
 
-// Optional: Add an index if you need to search by title frequently
+// Add an index if you need to search by title frequently
 notesSchema.index({ title: 1 });
 
 export default mongoose.model("Notes", notesSchema);

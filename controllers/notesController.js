@@ -24,6 +24,15 @@ export const addNote = async (req, res) => {
       return res.status(400).render("profile", { user: req.user, error: "Title and description are required" });
     }
 
+    // Check if a note with the same title already exists for the user
+    const existingNote = await Notes.findOne({ title, user: userId });
+    if (existingNote) {
+      return res.status(400).render("profile", {
+        user: req.user,
+        error: "A note with this title already exists. Please use a different title.",
+      });
+    }
+
     const newNote = new Notes({ title, description, user: userId });
 
     try {
