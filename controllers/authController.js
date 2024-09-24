@@ -1,8 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.model.js";
+import { nanoid } from "nanoid";
+import Guest from "../models/Guest.model.js";
 import { userRegisterSchema } from "../utils/zodValidation.js";
 
+// registration logic
 export const register = async (req, res) => {
   try {
     const { username, name, age, email, password } = userRegisterSchema.parse(req.body);
@@ -31,6 +34,7 @@ export const register = async (req, res) => {
   }
 };
 
+// registration check
 export const checkAuth = (req, res) => {
   const token = req.cookies.token;
 
@@ -47,6 +51,7 @@ export const checkAuth = (req, res) => {
   res.render("register", { error: "" });
 };
 
+// login route
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -73,6 +78,7 @@ export const login = async (req, res) => {
   }
 };
 
+// login check
 export const checkLogin = (req, res) => {
   const token = req.cookies.token;
 
@@ -89,11 +95,41 @@ export const checkLogin = (req, res) => {
   res.render("login", { error: "" });
 };
 
+// logout
 export const logout = (req, res) => {
   try {
     res.clearCookie("token");
     res.redirect("/login");
   } catch (error) {
     res.status(500).send(err.message);
+  }
+};
+
+// guest sign-in
+const GUEST_JWT_SECRET = process.env.GUEST_JWT_SECRET;
+
+export const guestSignIn = async (req, res) => {
+  try {
+    // Create a unique username and email for the guest
+    const username = nanoid();
+    const email = `${username}@guestmail.com`;
+    const password = Math.random().toString(36).substring(2, 6);
+
+    const guestUser = new Guest({
+      username,
+      email,
+      password,
+    });
+
+    await guestUser.save();
+
+    const token = jwt.sign({ id: guestUser._id }, GUEST_JWT_SECRET, { expiresIn: "10m" });
+
+    res.cookie("jwt", token, { httpOnly: true, maxAge: 10 * 60 * 1000 }); // 10 minutes
+
+    res.redirect(`/profile/${username}`);
+  } catch (err) {
+    console.error("Error signing in as guest:", err);
+    res.status(500).render("error");
   }
 };
