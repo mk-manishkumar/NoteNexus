@@ -1,12 +1,15 @@
 import Notes from "../models/Notes.model.js";
 import User from "../models/User.model.js";
+import { getUserForRole } from "../utils/getUserForRole.js";
 
 // Fetch Archived Notes
 export const fetchArchivedNotes = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const user = await User.findById(userId);
-    const archivedNotes = await Notes.find({ user: userId, isArchived: true });
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
+
+    const archivedNotes = await Notes.find({ user, isArchived: true, isDeleted: false });
     res.render("archive", { notes: archivedNotes, user, error: "" });
   } catch (err) {
     console.error(err);
@@ -62,21 +65,24 @@ export const clearArchive = async (req, res) => {
 export const searchArchive = async (req, res) => {
   try {
     const { search } = req.query;
-    const userId = req.user.id;
+
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
 
     if (!search) {
-      return res.status(400).render("archive", { error: "Please enter a search query.", user: req.user, notes: [] });
+      return res.status(400).render("archive", { error: "Please enter a search query.", user, notes: [] });
     }
 
     const notes = await Notes.find({
-      user: userId,
+      user,
       isArchived: true,
       isDeleted: false,
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
     if (notes.length === 0) {
-      return res.status(404).render("archive", { error: "No notes found", user: req.user, notes: [] });
+      return res.status(404).render("archive", { error: "No notes found", user, notes: [] });
     }
 
     res.render("archive", { user: req.user, notes, error: "" });

@@ -1,12 +1,15 @@
 import User from "../models/User.model.js";
 import Notes from "../models/Notes.model.js";
+import { getUserForRole } from "../utils/getUserForRole.js";
 
 // Fetch Active Notes (not deleted or archived)
 export const fetchNotes = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const user = await User.findById(userId);
-    const activeNotes = await Notes.find({ user: userId, isDeleted: false, isArchived: false });
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
+
+    const activeNotes = await Notes.find({ user, isDeleted: false, isArchived: false }).lean();
     res.render("notes", { notes: activeNotes, user, error: "" });
   } catch (err) {
     console.error(err);
@@ -17,23 +20,26 @@ export const fetchNotes = async (req, res) => {
 // Add Note
 export const addNote = async (req, res) => {
   try {
-    const userId = req.user.id;
     const { title, description } = req.body;
 
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
+
     if (!title || !description) {
-      return res.status(400).render("profile", { user: req.user, error: "Title and description are required" });
+      return res.status(400).render("profile", { user, error: "Title and description are required" });
     }
 
     // Check if a note with the same title already exists for the user
-    const existingNote = await Notes.findOne({ title, user: userId });
+    const existingNote = await Notes.findOne({ title, user: user._id });
     if (existingNote) {
       return res.status(400).render("profile", {
-        user: req.user,
+        user,
         error: "A note with this title already exists. Please use a different title.",
       });
     }
 
-    const newNote = new Notes({ title, description, user: userId });
+    const newNote = new Notes({ title, description, user: user._id });
 
     try {
       await newNote.validate();
@@ -44,13 +50,17 @@ export const addNote = async (req, res) => {
         const errorMessage = Object.values(validationError.errors)
           .map((err) => err.message)
           .join(", ");
-        return res.status(400).render("profile", { user: req.user, error: errorMessage });
+        return res.status(400).render("profile", { user, error: errorMessage });
       }
       // Throw if it's not a validation error, re-throwing the error to the outer catch block.
       throw validationError;
     }
 
-    await User.findByIdAndUpdate(userId, { $push: { notes: newNote._id } });
+    if (role === "guest") {
+      await Guest.findByIdAndUpdate(user._id, { $push: { notes: newNote._id } });
+    } else {
+      await User.findByIdAndUpdate(user._id, { $push: { notes: newNote._id } });
+    }
 
     res.redirect("/notes");
   } catch (err) {
@@ -113,11 +123,13 @@ export const clearAllNotes = async (req, res) => {
 export const openNote = async (req, res) => {
   try {
     const { slug } = req.params;
-    const userId = req.user.id;
-    const user = await User.findById(userId);
+
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
 
     // Find the note by its slug and user ID
-    const note = await Notes.findOne({ slug, user: userId });
+    const note = await Notes.findOne({ slug, user });
 
     if (!note) {
       return res.status(404).send("Note not found");
@@ -134,10 +146,12 @@ export const openNote = async (req, res) => {
 export const getEditNote = async (req, res) => {
   try {
     const { slug } = req.params;
-    const userId = req.user.id;
-    const user = await User.findById(userId);
 
-    const note = await Notes.findOne({ slug, user: userId });
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
+
+    const note = await Notes.findOne({ slug, user });
 
     if (!note) {
       return res.status(404).send("Note not found");
@@ -190,17 +204,17 @@ export const updateNote = async (req, res) => {
 export const searchNotes = async (req, res) => {
   try {
     const { search } = req.query;
-    const userId = req.user.id;
-    const user = await User.findById(userId);
 
-    // console.log(req.user);
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
 
     if (!search) {
       return res.status(400).render("notes", { error: "Please enter a search query.", user, notes: [] });
     }
 
     const notes = await Notes.find({
-      user: userId,
+      user,
       isArchived: false,
       isDeleted: false,
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],

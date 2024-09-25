@@ -65,7 +65,7 @@
           <p class="text-red-500 mb-4"><%= error %></p>
           <% } %>
 
-          <button type="submit" class="bg-red-700 px-4 py-1 rounded-md mt-5 block">Delete</button>
+          <button type="submit" class="px-4 py-1 rounded-md mt-5 block <% if (guestMode) { %> bg-red-400 cursor-not-allowed <% } else { %> bg-red-700 <% } %>" <% if (guestMode) { %>disabled title="Not available for guest users" <% } %> > Delete</button>
         </form>
       </div>
     </div>

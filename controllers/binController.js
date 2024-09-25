@@ -1,12 +1,15 @@
 import Notes from "../models/Notes.model.js";
 import User from "../models/User.model.js";
+import { getUserForRole } from "../utils/getUserForRole.js";
 
 // Fetch Deleted Notes (Bin)
 export const fetchDeletedNotes = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const user = await User.findById(userId);
-    const deletedNotes = await Notes.find({ user: userId, isDeleted: true });
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
+
+    const deletedNotes = await Notes.find({ user, isDeleted: true, isArchived: false });
     res.render("bin", { notes: deletedNotes, user, error: "" });
   } catch (err) {
     console.error(err);
@@ -73,21 +76,24 @@ export const clearBin = async (req, res) => {
 export const searchBin = async (req, res) => {
   try {
     const { search } = req.query;
-    const userId = req.user.id;
+
+    const { username, role } = req.user;
+
+    const user = await getUserForRole(role, username);
 
     if (!search) {
-      return res.status(400).render("bin", { error: "Please enter a search query.", user: req.user, notes: [] });
+      return res.status(400).render("bin", { error: "Please enter a search query.", user, notes: [] });
     }
 
     const notes = await Notes.find({
-      user: userId,
+      user,
       isArchived: false,
       isDeleted: true,
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
     if (notes.length === 0) {
-      return res.status(404).render("bin", { error: "No notes found", user: req.user, notes: [] });
+      return res.status(404).render("bin", { error: "No notes found", user, notes: [] });
     }
 
     res.render("bin", { user: req.user, notes, error: "" });

@@ -1,16 +1,23 @@
 import jwt from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
-  const token = req.cookies.token; 
+  const token = req.cookies.token;
 
   if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // Attach user data to request object
-    next(); 
+    return next();
   } catch (err) {
-    res.status(400).json({ message: "Invalid token." });
+    try {
+      let decodedGuest = jwt.verify(token, process.env.GUEST_JWT_SECRET);
+      req.user = decodedGuest;
+      req.user.role = "guest";
+      return next();
+    } catch (guestError) {
+      return res.status(400).json({ message: "Invalid token." });
+    }
   }
 };
 

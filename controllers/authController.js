@@ -57,14 +57,12 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    // If the user does not exist, render the login page with an error message
     if (!user) {
       return res.status(400).render("login", { error: "Invalid user", email });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
 
-    // If the password is incorrect, render the login page with an error message
     if (!validPassword) {
       return res.status(400).render("login", { error: "Invalid credentials", email });
     }
@@ -110,7 +108,6 @@ const GUEST_JWT_SECRET = process.env.GUEST_JWT_SECRET;
 
 export const guestSignIn = async (req, res) => {
   try {
-    // Create a unique username and email for the guest
     const username = nanoid();
     const email = `${username}@guestmail.com`;
     const password = Math.random().toString(36).substring(2, 6);
@@ -123,9 +120,9 @@ export const guestSignIn = async (req, res) => {
 
     await guestUser.save();
 
-    const token = jwt.sign({ id: guestUser._id }, GUEST_JWT_SECRET, { expiresIn: "10m" });
+    const token = jwt.sign({ id: guestUser._id, username: guestUser.username }, GUEST_JWT_SECRET, { expiresIn: "10m" });
 
-    res.cookie("jwt", token, { httpOnly: true, maxAge: 10 * 60 * 1000 }); // 10 minutes
+    res.cookie("token", token, { httpOnly: true, maxAge: 10 * 60 * 1000 }); // 10 minutes
 
     res.redirect(`/profile/${username}`);
   } catch (err) {

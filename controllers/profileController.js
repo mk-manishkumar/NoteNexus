@@ -1,4 +1,5 @@
 import User from "../models/User.model.js";
+import Guest from "../models/Guest.model.js";
 import bcrypt from "bcrypt";
 import { userUpdateSchema } from "../utils/zodValidation.js";
 
@@ -6,10 +7,16 @@ export const displayProfile = async (req, res) => {
   try {
     const { username } = req.params;
 
-    const user = await User.findOne({ username });
+    let user;
+
+    if (req.user.role === "guest") {
+      user = await Guest.findOne({ username });
+    } else {
+      user = await User.findOne({ username });
+    }
 
     if (!user) {
-      return res.status(404).send("User not found");
+      return res.status(404).render("error");
     }
 
     res.render("profile", { user, error: "" });
@@ -23,13 +30,21 @@ export const displayEditProfile = async (req, res) => {
   try {
     const { username } = req.params;
 
-    const user = await User.findOne({ username });
+    let user;
+
+    if (req.user.role === "guest") {
+      user = await Guest.findOne({ username });
+    } else {
+      user = await User.findOne({ username });
+    }
 
     if (!user) {
       return res.status(404).send("User not found");
     }
 
-    res.render("editProfile", { user, error: "" });
+    const guestMode = req.user.role === "guest";
+
+    res.render("editProfile", { user, guestMode, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -60,13 +75,21 @@ export const changePassword = async (req, res) => {
   try {
     const { username } = req.params;
 
-    const user = await User.findOne({ username });
+    let user;
+
+    if (req.user.role === "guest") {
+      user = await Guest.findOne({ username });
+    } else {
+      user = await User.findOne({ username });
+    }
 
     if (!user) {
       return res.status(404).send("User not found");
     }
 
-    res.render("changePassword", { user, error: "" });
+    const guestMode = req.user.role === "guest";
+
+    res.render("changePassword", { user, guestMode, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -116,13 +139,22 @@ export const updatePassword = async (req, res) => {
 export const getDeletePage = async (req, res) => {
   try {
     const { username } = req.params;
-    const user = await User.findOne({ username });
+
+    let user;
+
+    if (req.user.role === "guest") {
+      user = await Guest.findOne({ username });
+    } else {
+      user = await User.findOne({ username });
+    }
 
     if (!user) {
       return res.status(404).send("User not found");
     }
 
-    res.render("deleteProfile", { user, error: "" });
+    const guestMode = req.user.role === "guest";
+
+    res.render("deleteProfile", { user, guestMode, error: "" });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
