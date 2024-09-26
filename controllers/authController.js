@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.model.js";
+import Notes from "../models/Notes.model.js";
 import { nanoid } from "nanoid";
 import Guest from "../models/Guest.model.js";
 import { userRegisterSchema } from "../utils/zodValidation.js";
@@ -94,12 +95,22 @@ export const checkLogin = (req, res) => {
 };
 
 // logout
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
   try {
+    if (req.user.role === "guest") {
+      const { username } = req.user;
+      const guestUser = await Guest.findOne({ username });
+      if (guestUser) {
+        await Guest.deleteOne({ username });
+        await Notes.deleteMany({ user: guestUser._id });
+      }
+    }
+
     res.clearCookie("token");
     res.redirect("/login");
   } catch (error) {
-    res.status(500).send(err.message);
+    console.log(error);
+    res.status(500).render("error");
   }
 };
 

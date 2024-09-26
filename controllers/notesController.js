@@ -1,5 +1,6 @@
 import User from "../models/User.model.js";
 import Notes from "../models/Notes.model.js";
+import Guest from "../models/Guest.model.js";
 import { getUserForRole } from "../utils/getUserForRole.js";
 
 // Fetch Active Notes (not deleted or archived)
@@ -28,15 +29,6 @@ export const addNote = async (req, res) => {
 
     if (!title || !description) {
       return res.status(400).render("profile", { user, error: "Title and description are required" });
-    }
-
-    // Check if a note with the same title already exists for the user
-    const existingNote = await Notes.findOne({ title, user: user._id });
-    if (existingNote) {
-      return res.status(400).render("profile", {
-        user,
-        error: "A note with this title already exists. Please use a different title.",
-      });
     }
 
     const newNote = new Notes({ title, description, user: user._id });

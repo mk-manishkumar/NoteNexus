@@ -19,7 +19,6 @@ const notesSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      unique: true,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -35,14 +34,26 @@ const notesSchema = new mongoose.Schema(
 );
 
 // Pre-save hook to generate slug from title
-notesSchema.pre("save", function (next) {
+notesSchema.pre("save", async function (next) {
   if (this.isModified("title")) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
+    let baseSlug = slugify(this.title, { lower: true, strict: true });
+    let slug = baseSlug;
+    let count = 0;
+
+    // Check if a note with the same slug exists for this user
+    while (await this.constructor.findOne({ slug, user: this.user })) {
+      count++;
+      slug = `${baseSlug}-${count}`;
+    }
+
+    this.slug = slug;
   }
   next();
 });
 
 // Add an index if you need to search by title frequently
 notesSchema.index({ title: 1 });
+
+notesSchema.index({ slug: 1, user: 1 }, { unique: true });
 
 export default mongoose.model("Notes", notesSchema);

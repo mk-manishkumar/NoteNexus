@@ -8,6 +8,7 @@ const guestSchema = new mongoose.Schema({
   password: { type: String, required: true },
   age: { type: Number, default: 25 },
   notes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Note" }],
+  createdAt: { type: Date, default: Date.now, expires: "10m" },
 });
 
 // Hash password before saving guest
@@ -16,6 +17,16 @@ guestSchema.pre("save", async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();
+});
+
+// Delete all notes created by the guest
+guestSchema.pre("remove", async function (next) {
+  try {
+    await Notes.deleteMany({ user: this._id }); 
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default mongoose.model("Guest", guestSchema);

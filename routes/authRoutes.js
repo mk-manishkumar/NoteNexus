@@ -1,4 +1,5 @@
 import express from "express";
+import authMiddleware from "../middlewares/authMiddleware.js";
 import { register, login, logout, checkAuth, checkLogin, guestSignIn } from "../controllers/authController.js";
 
 const authRouter = express.Router();
@@ -16,7 +17,7 @@ authRouter.post("/", register);
 authRouter.post("/login", login);
 
 // Logout route
-authRouter.post("/logout", logout);
+authRouter.post("/logout", authMiddleware, logout);
 
 // guest signin
 authRouter.get("/guest-signin", guestSignIn);
