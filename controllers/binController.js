@@ -10,10 +10,10 @@ export const fetchDeletedNotes = async (req, res) => {
     const user = await getUserForRole(role, username);
 
     const deletedNotes = await Notes.find({ user, isDeleted: true, isArchived: false });
-    res.render("bin", { notes: deletedNotes, user, error: "" });
+    res.status(200).render("bin", { notes: deletedNotes, user, error: "" });
   } catch (err) {
     console.error(err);
-    res.status(500).send(err.message);
+    res.status(500).render("error");
   }
 };
 
@@ -22,11 +22,14 @@ export const restoreFromBin = async (req, res) => {
     const { noteId } = req.body;
     const userId = req.user.id;
 
-    await Notes.findOneAndUpdate({ _id: noteId, user: userId, isDeleted: true }, { $set: { isDeleted: false } });
-    res.redirect("/bin");
-  } catch (error) {
+    const note = await Notes.findOneAndUpdate({ _id: noteId, user: userId, isDeleted: true }, { $set: { isDeleted: false } });
+
+    if (!note) return res.status(404).send("Note not found or already restored.");
+
+    res.status(200).redirect("/bin");
+  } catch (err) {
     console.error(err);
-    res.status(500).send(err.message);
+    res.status(500).render("error");
   }
 };
 
@@ -37,6 +40,8 @@ export const deleteFromBin = async (req, res) => {
 
     const deletedNote = await Notes.findOneAndDelete({ _id: noteId, user: userId, isDeleted: true });
 
+    if (!deletedNote) return res.status(404).send("Note not found or already deleted.");
+
     // If the note was successfully deleted, update the user's notes array
     if (deletedNote) {
       await User.findByIdAndUpdate(userId, {
@@ -44,10 +49,10 @@ export const deleteFromBin = async (req, res) => {
       });
     }
 
-    res.redirect("/bin");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    res.status(200).redirect("/bin");
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error");
   }
 };
 
@@ -66,10 +71,10 @@ export const clearBin = async (req, res) => {
       });
     }
 
-    res.redirect("/bin");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    res.status(200).redirect("/bin");
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error");
   }
 };
 
@@ -81,9 +86,7 @@ export const searchBin = async (req, res) => {
 
     const user = await getUserForRole(role, username);
 
-    if (!search) {
-      return res.status(400).render("bin", { error: "Please enter a search query.", user, notes: [] });
-    }
+    if (!search) return res.status(400).render("bin", { error: "Please enter a search query.", user, notes: [] });
 
     const notes = await Notes.find({
       user,
@@ -92,13 +95,11 @@ export const searchBin = async (req, res) => {
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
-    if (notes.length === 0) {
-      return res.status(404).render("bin", { error: "No notes found", user, notes: [] });
-    }
+    if (notes.length === 0) return res.status(404).render("bin", { error: "No notes found", user, notes: [] });
 
-    res.render("bin", { user: req.user, notes, error: "" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    res.status(200).render("bin", { user, notes, error: "" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error");
   }
 };

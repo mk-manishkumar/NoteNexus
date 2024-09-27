@@ -10,10 +10,10 @@ export const fetchArchivedNotes = async (req, res) => {
     const user = await getUserForRole(role, username);
 
     const archivedNotes = await Notes.find({ user, isArchived: true, isDeleted: false });
-    res.render("archive", { notes: archivedNotes, user, error: "" });
+    res.status(200).render("archive", { notes: archivedNotes, user, error: "" });
   } catch (err) {
     console.error(err);
-    res.status(500).send(err.message);
+    res.status(500).render("error");
   }
 };
 
@@ -23,12 +23,14 @@ export const deleteFromArchive = async (req, res) => {
     const { noteId } = req.body;
     const userId = req.user.id;
 
-    await Notes.findOneAndDelete({ _id: noteId, user: userId, isArchived: true });
+    const deletedNote = await Notes.findOneAndDelete({ _id: noteId, user: userId, isArchived: true });
 
-    res.redirect("/archive");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    if (!deletedNote) return res.status(404).send("Note not found or already deleted.");
+
+    res.status(200).redirect("/archive");
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error");
   }
 };
 
@@ -40,10 +42,12 @@ export const restoreFromArchive = async (req, res) => {
 
     await Notes.findOneAndUpdate({ _id: noteId, user: userId, isArchived: true }, { $set: { isArchived: false } }, { new: true });
 
-    res.redirect("/archive");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    if (!restoredNote) return res.status(404).send("Note not found or already restored.");
+
+    res.status(200).redirect("/archive");
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error");
   }
 };
 
@@ -54,10 +58,10 @@ export const clearArchive = async (req, res) => {
 
     await Notes.deleteMany({ user: userId, isArchived: true });
 
-    res.redirect("/archive");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    res.status(200).redirect("/archive");
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error");
   }
 };
 
@@ -70,9 +74,7 @@ export const searchArchive = async (req, res) => {
 
     const user = await getUserForRole(role, username);
 
-    if (!search) {
-      return res.status(400).render("archive", { error: "Please enter a search query.", user, notes: [] });
-    }
+    if (!search) return res.status(400).render("archive", { error: "Please enter a search query.", user, notes: [] });
 
     const notes = await Notes.find({
       user,
@@ -81,13 +83,11 @@ export const searchArchive = async (req, res) => {
       $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
     });
 
-    if (notes.length === 0) {
-      return res.status(404).render("archive", { error: "No notes found", user, notes: [] });
-    }
+    if (notes.length === 0) return res.status(404).render("archive", { error: "No notes found", user, notes: [] });
 
-    res.render("archive", { user: req.user, notes, error: "" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    res.status(200).render("archive", { user, notes, error: "" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error");
   }
 };
