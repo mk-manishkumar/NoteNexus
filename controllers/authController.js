@@ -5,6 +5,7 @@ import Notes from "../models/Notes.model.js";
 import { nanoid } from "nanoid";
 import Guest from "../models/Guest.model.js";
 import { userRegisterSchema } from "../utils/zodValidation.js";
+import { getUserForRole } from "../utils/getUserForRole.js";
 
 // registration logic
 export const register = async (req, res) => {
@@ -24,12 +25,11 @@ export const register = async (req, res) => {
     user = new User({ username, name, age, email, password });
     await user.save();
 
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "30d" });
+    const token = jwt.sign({ id: user._id, username: user.username, role: "user" }, process.env.JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
 
     res.redirect(`/profile/${user.username}`);
   } catch (err) {
-    // Handle Zod validation errors or any other errors
     const errorMessage = err.errors ? err.errors.map((e) => e.message).join(", ") : err.message;
     res.status(400).render("register", { error: errorMessage || "Something went wrong. Please try again." });
   }
@@ -41,8 +41,13 @@ export const checkAuth = (req, res) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const username = decoded.username;
+      const decoded = jwt.decode(token);
+
+      const secretKey = decoded && decoded.role === "guest" ? process.env.GUEST_JWT_SECRET : process.env.JWT_SECRET;
+
+      const verified = jwt.verify(token, secretKey);
+      const username = verified.username;
+
       return res.redirect(`/profile/${username}`);
     } catch (error) {
       return res.status(400).json({ message: "Invalid token." });
@@ -68,7 +73,7 @@ export const login = async (req, res) => {
       return res.status(400).render("login", { error: "Invalid credentials", email });
     }
 
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "30d" });
+    const token = jwt.sign({ id: user._id, username: user.username, role: "user" }, process.env.JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
 
     res.redirect(`/profile/${user.username}`);
@@ -83,8 +88,13 @@ export const checkLogin = (req, res) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const username = decoded.username;
+      const decoded = jwt.decode(token);
+
+      const secretKey = decoded && decoded.role === "guest" ? process.env.GUEST_JWT_SECRET : process.env.JWT_SECRET;
+
+      const verified = jwt.verify(token, secretKey);
+      const username = verified.username;
+
       return res.redirect(`/profile/${username}`);
     } catch (error) {
       return res.status(400).render("error", { error: "Invalid token. Please log in again." });
@@ -131,7 +141,7 @@ export const guestSignIn = async (req, res) => {
 
     await guestUser.save();
 
-    const token = jwt.sign({ id: guestUser._id, username: guestUser.username }, GUEST_JWT_SECRET, { expiresIn: "10m" });
+    const token = jwt.sign({ id: guestUser._id, username: guestUser.username, role: "guest" }, GUEST_JWT_SECRET, { expiresIn: "10m" });
 
     res.cookie("token", token, { httpOnly: true, maxAge: 10 * 60 * 1000 }); // 10 minutes
 
