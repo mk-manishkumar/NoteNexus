@@ -40,7 +40,7 @@ export const restoreFromArchive = async (req, res) => {
     const { noteId } = req.body;
     const userId = req.user.id;
 
-    await Notes.findOneAndUpdate({ _id: noteId, user: userId, isArchived: true }, { $set: { isArchived: false } }, { new: true });
+    const restoredNote = await Notes.findOneAndUpdate({ _id: noteId, user: userId, isArchived: true }, { $set: { isArchived: false } }, { new: true });
 
     if (!restoredNote) return res.status(404).send("Note not found or already restored.");
 
