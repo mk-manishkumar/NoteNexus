@@ -131,7 +131,7 @@ While this application is fully functional, some possible future enhancements in
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the [MIT License](https://github.com/mk-manishkumar/NoteNexus/blob/main/LICENSE).
 
 ---
 
