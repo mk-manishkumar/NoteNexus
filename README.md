@@ -2,8 +2,13 @@
 
 **NoteNexus** is a  note-taking application* built using **Node.js, Express, MongoDB, and EJS**, with additional support for guest access, authentication, and a clean user interface. 
 
+## Deployment Link
+
+This web application is live. [Click here](https://notenexus-nmow.onrender.com)
+
 ## Table of Contents
 - [NoteNexus](#notenexus)
+  - [Deployment Link](#deployment-link)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Technologies Used](#technologies-used)
