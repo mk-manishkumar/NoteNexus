@@ -43,7 +43,9 @@ This web application is live. [Click here](https://notenexus-nmow.onrender.com)
 - **Frontend**: Tailwind CSS
 - **Validation**: Zod
 - **Session Management**: Cookies, JWT
-- **Other**: nanoid for unique slug generation, dotenv for environment configuration
+- **nanoid**: For unique slug generation.
+- **dotenv**: For environment configuration.
+- **node-cron**: For scheduling automated tasks like deleting inactive users.
 
 ---
 
