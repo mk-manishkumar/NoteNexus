@@ -11,6 +11,10 @@ const port = process.env.PORT || 3000;
 import connectDB from "./config/db.js";
 connectDB();
 
+// Import the job scheduler
+import { scheduleUserDeletionJob } from "./utils/cronJob.js";
+scheduleUserDeletionJob();
+
 import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import notesRouter from "./routes/notesRoutes.js";

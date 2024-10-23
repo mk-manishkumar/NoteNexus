@@ -5,7 +5,6 @@ import Notes from "../models/Notes.model.js";
 import Guest from "../models/Guest.model.js";
 import { nanoid } from "nanoid";
 import { userRegisterSchema } from "../utils/zodValidation.js";
-import { getUserForRole } from "../utils/getUserForRole.js";
 
 // to generate JWT tokens
 const generateToken = (id, username, role, secret, expiresIn) => {
@@ -77,6 +76,10 @@ export const login = async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).render("login", { error: "Invalid credentials", email });
     }
+
+    // Update lastLogin field for the user
+    user.lastLogin = Date.now();
+    await user.save();
 
     const token = generateToken(user._id, user.username, "user", process.env.JWT_SECRET, "30d");
     setTokenCookie(res, token, 30 * 24 * 60 * 60 * 1000); // 30 days

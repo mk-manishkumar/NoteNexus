@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema(
         ref: "Notes",
       },
     ],
+    lastLogin: {
+      type: Date,
+      default: Date.now, 
+    },
   },
   { timestamps: true }
 );
