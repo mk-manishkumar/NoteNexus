@@ -1,10 +1,12 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import { deleteNote, archiveNote, addNote, fetchNotes, clearAllNotes, openNote, getEditNote, updateNote, searchNotes } from "../controllers/notesController.js";
+import { guestRestrictions } from "../middlewares/guestRestrictions.js";
 
 const notesRouter = express.Router();
 
 notesRouter.use(authMiddleware);
+notesRouter.use(guestRestrictions);
 
 // Route for fetching all notes
 notesRouter.get("/", fetchNotes);

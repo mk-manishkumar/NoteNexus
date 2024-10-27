@@ -6,26 +6,27 @@ import { guestRestrictions } from "../middlewares/guestRestrictions.js";
 const profileRouter = express.Router();
 
 profileRouter.use(authMiddleware);
+profileRouter.use(guestRestrictions);
 
 // to display profile page
 profileRouter.get("/:username", displayProfile);
 
 // to display edit page
-profileRouter.get("/edit/:username", guestRestrictions, displayEditProfile);
+profileRouter.get("/edit/:username", displayEditProfile);
 
 // to updated changes in profile
-profileRouter.post("/edit/:username", guestRestrictions, updateProfile);
+profileRouter.post("/edit/:username", updateProfile);
 
 // to display change password page
-profileRouter.get("/:username/change-password", guestRestrictions, changePassword);
+profileRouter.get("/:username/change-password", changePassword);
 
 // to update password
-profileRouter.post("/:username/update-password", guestRestrictions, updatePassword);
+profileRouter.post("/:username/update-password", updatePassword);
 
 // to display delete profile page
-profileRouter.get("/:username/delete-profile", guestRestrictions, getDeletePage);
+profileRouter.get("/:username/delete-profile", getDeletePage);
 
 // to delete the profile
-profileRouter.post("/:username/delete-profile", guestRestrictions, deleteProfile);
+profileRouter.post("/:username/delete-profile", deleteProfile);
 
 export default profileRouter;

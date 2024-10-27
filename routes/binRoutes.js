@@ -1,10 +1,12 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import { fetchDeletedNotes, restoreFromBin, deleteFromBin, clearBin, searchBin } from "../controllers/binController.js";
+import { guestRestrictions } from "../middlewares/guestRestrictions.js";
 
 const binRouter = express.Router();
 
 binRouter.use(authMiddleware);
+binRouter.use(guestRestrictions);
 
 // to fetch bin page
 binRouter.get("/", fetchDeletedNotes);
