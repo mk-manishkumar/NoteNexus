@@ -78,7 +78,7 @@ const NoteForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col flex-grow w-full">
+    <div className="bg-zinc-800 flex flex-col flex-grow w-full">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -113,9 +113,9 @@ const NoteForm: React.FC = () => {
           <motion.h3 className=" text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent" whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
             Hello, <span className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">John Doe</span>
           </motion.h3>
-          <motion.a href="/profile/edit/johndoe" className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white px-6 py-3 rounded-xl cursor-pointer font-semibold shadow-lg backdrop-blur-sm border border-pink-500/20" variants={profileButtonVariants} whileHover="hover" whileTap="tap">
+          <MotionLink to={"/profile/edit/johndoe"} className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white px-6 py-3 rounded-xl cursor-pointer font-semibold shadow-lg backdrop-blur-sm border border-pink-500/20" variants={profileButtonVariants} whileHover="hover" whileTap="tap">
             Edit Profile
-          </motion.a>
+          </MotionLink>
         </motion.section>
 
         {/* Add Note Form */}
@@ -157,7 +157,7 @@ const NoteForm: React.FC = () => {
             <motion.div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 pointer-events-none" initial={{ opacity: 0 }} animate={{ opacity: focusedField === "description" ? 1 : 0 }} transition={{ duration: 0.2 }} />
           </motion.div>
 
-          <MotionButton className="bg-gradient-to-r from-blue-500 to-purple-600 text-white w-full rounded-xl p-6 lg:w-1/3 cursor-pointer font-semibold shadow-xl border border-blue-500/30 backdrop-blur-sm" type="submit" variants={buttonVariants} whileHover="hover" whileTap="tap">
+          <MotionButton className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white w-full rounded-xl p-6 lg:w-1/3 cursor-pointer font-semibold shadow-xl border border-blue-500/30 backdrop-blur-sm" type="submit" variants={buttonVariants} whileHover="hover" whileTap="tap">
             Add Note
           </MotionButton>
 
@@ -169,7 +169,6 @@ const NoteForm: React.FC = () => {
       </motion.div>
 
       {/* Floating particles effect */}
-
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {particles.map((particle) => (
           <motion.div
