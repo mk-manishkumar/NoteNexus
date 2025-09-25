@@ -1,14 +1,25 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import { authApi } from "@/api/api";
 
 const inputClassName = "block w-full sm:w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors";
 
+type RegisterFormData = {
+  username: string;
+  name: string;
+  email: string;
+  age: string;
+  password: string;
+};
+
 const Signup: React.FC = () => {
-  const [form, setForm] = useState({
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState<RegisterFormData>({
     username: "",
     name: "",
     email: "",
@@ -24,14 +35,33 @@ const Signup: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.username || !form.name || !form.email || !form.age || !form.password) {
       toast.error("All fields are required.");
+      return;
     }
+    setLoading(true);
 
     // Connect with API
-    
+    try {
+      const payload = {
+        ...form,
+        age: Number(form.age),
+      };
+      await authApi.register(payload);
+      toast.success("Registration successful!");
+      setForm({ username: "", name: "", email: "", age: "", password: "" });
+      navigate("/profile");
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) {
+        toast.error(typeof err.response.data.message === "string" ? err.response.data.message : "Registration failed.");
+      } else {
+        toast.error("Registration failed.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,8 +99,8 @@ const Signup: React.FC = () => {
           </motion.div>
 
           {/* Submit Button */}
-          <motion.button type="submit" whileHover={{ scale: 1.04, boxShadow: "0 2px 12px #60a5fa33" }} whileTap={{ scale: 0.96 }} className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-96 rounded-md px-4 py-2 mb-3 transition-colors cursor-pointer font-semibold">
-            Register
+          <motion.button type="submit" whileHover={{ scale: loading ? 1 : 1.04, boxShadow: loading ? "none" : "0 2px 12px #60a5fa33" }} whileTap={{ scale: loading ? 1 : 0.96 }} disabled={loading} className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white w-full sm:w-96 rounded-md px-4 py-2 mb-3 transition-colors cursor-pointer font-semibold">
+            {loading ? "Registering..." : "Register"}
           </motion.button>
 
           {/* Link to Login */}

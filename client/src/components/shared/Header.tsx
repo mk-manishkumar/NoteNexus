@@ -1,10 +1,24 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { authApi } from "@/api/api";
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+      toast.success("Logged out successfully!");
+      navigate("/login");
+    } catch (error) {
+      toast.error("Logout failed. Please try again.");
+      console.error("Logout error:", error);
+    }
+  };
 
   return (
     <nav className="flex justify-between bg-[#CA2B58] text-white py-5 px-1 md:p-5 relative">
@@ -27,15 +41,15 @@ const Header: React.FC = () => {
         <Link to={"/notes"}>NOTES</Link>
         <Link to={"/bin"}>BIN</Link>
         <Link to={"/archive"}>ARCHIVE</Link>
-        <Link to={"/logout"}>
+        <button onClick={handleLogout} className="flex items-center gap-1 focus:outline-none hover:opacity-80 transition-opacity cursor-pointer" aria-label="Logout" type="button">
           <MdLogout size={20} />
-        </Link>
+        </button>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
         <div className="absolute top-full left-0 w-full bg-[#CA2B58] flex flex-col items-center py-5 gap-5 md:hidden z-50">
-          <Link to={"/notes"} className="w-full text-center border-t border-white pt-[10px]" onClick={() => setIsOpen(false)} >
+          <Link to={"/notes"} className="w-full text-center border-t border-white pt-[10px]" onClick={() => setIsOpen(false)}>
             NOTES
           </Link>
           <Link to={"/bin"} className="w-full text-center border-t border-white pt-[10px]" onClick={() => setIsOpen(false)}>
@@ -44,9 +58,16 @@ const Header: React.FC = () => {
           <Link to={"/archive"} className="w-full text-center border-t border-white pt-[10px]" onClick={() => setIsOpen(false)}>
             ARCHIVE
           </Link>
-          <Link to={"/logout"} className="w-full text-center border-t border-white pt-[10px]" onClick={() => setIsOpen(false)}>
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              handleLogout();
+            }}
+            className="w-full text-center border-t border-white pt-[10px]"
+            type="button"
+          >
             LOG OUT
-          </Link>
+          </button>
         </div>
       )}
     </nav>

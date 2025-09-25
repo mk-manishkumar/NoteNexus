@@ -11,7 +11,7 @@ authRouter.get("/", checkAuth);
 authRouter.get("/login", checkLogin);
 
 // POST route for handling registration logic
-authRouter.post("/", register);
+authRouter.post("/register", register);
 
 // POST route for handling login logic
 authRouter.post("/login", login);
