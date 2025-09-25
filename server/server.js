@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import morgan from "morgan";
 
 import connectDB from "./config/db.js";
 import { scheduleUserDeletionJob } from "./utils/cronJob.js";
@@ -21,6 +22,7 @@ scheduleUserDeletionJob();
 // Middleware to parse JSON bodies and cookies
 app.use(express.json());
 app.use(cookieParser());
+app.use(morgan("dev"));
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
 app.get("/", (req, res) => {

@@ -1,15 +1,56 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import { authApi } from "@/api/api";
 
 const inputClassName = "block w-full sm:w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors";
 
-const stagger = 0.07;
+type LoginFormData = {
+  email: string;
+  password: string;
+};
 
 const Login: React.FC = () => {
-  const [error] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [form, setForm] = useState<LoginFormData>({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.email || !form.password) {
+      toast.error("Both email and password are required.");
+      return;
+    }
+    setLoading(true);
+    try {
+      await authApi.login(form);
+      toast.success("Login successful!");
+      navigate("/profile");
+    } catch (err: unknown) {
+      let message = "Login failed.";
+      if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) {
+        // @ts-expect-error: TypeScript can't infer the structure here
+        message = err.response.data.message || message;
+      }
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen relative overflow-hidden">
@@ -22,28 +63,27 @@ const Login: React.FC = () => {
           <h2 className="text-center text-white mt-8 text-2xl">Login to NoteNexus</h2>
         </motion.section>
 
-        <motion.div
+        <motion.form
           className="mt-12 flex flex-col items-center px-4"
           initial="hidden"
           animate="visible"
           variants={{
-            visible: { transition: { staggerChildren: stagger } },
+            visible: { transition: { staggerChildren: 0.07 } },
             hidden: {},
           }}
+          onSubmit={handleSubmit}
         >
           <motion.div variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 20 } }}>
-            <Input className={inputClassName} type="email" placeholder="Enter email" name="email" required />
+            <Input className={inputClassName} type="email" placeholder="Enter email" name="email" value={form.email} onChange={handleChange} required />
           </motion.div>
           <motion.div variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 20 } }}>
-            <Input className={inputClassName} type="password" placeholder="Enter password" name="password" required />
+            <Input className={inputClassName} type="password" placeholder="Enter password" name="password" value={form.password} onChange={handleChange} required />
           </motion.div>
 
-          <motion.div variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 10 } }}>{error && <p className="text-red-500 mb-4">{error}</p>}</motion.div>
-
           <motion.div variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 10 } }} className="w-full sm:w-96">
-            <Button className="bg-blue-500 hover:bg-blue-600 text-white w-full rounded-md px-4 py-2 mb-3 transition-colors cursor-pointer font-semibold" asChild>
-              <motion.span whileHover={{ scale: 1.04, boxShadow: "0 2px 12px #60a5fa33" }} whileTap={{ scale: 0.96 }} transition={{ type: "spring", stiffness: 250, damping: 15 }} className="relative z-10">
-                Login
+            <Button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white w-full rounded-md px-4 py-2 mb-3 transition-colors cursor-pointer font-semibold" disabled={loading} asChild>
+              <motion.span whileHover={loading ? undefined : { scale: 1.04, boxShadow: "0 2px 12px #60a5fa33" }} whileTap={loading ? undefined : { scale: 0.96 }} transition={{ type: "spring", stiffness: 250, damping: 15 }} className="relative z-10">
+                {loading ? "Logging in..." : "Login"}
               </motion.span>
             </Button>
           </motion.div>
@@ -54,13 +94,12 @@ const Login: React.FC = () => {
               <Link to={"/"}>Click here to register.</Link>
             </motion.span>
           </motion.p>
-        </motion.div>
+        </motion.form>
       </div>
 
       <footer className="bg-[#CA2B58] p-4 relative z-10">
         <p className="text-center text-white text-xl tracking-tight">NoteNexus &copy; 2024</p>
       </footer>
-
     </div>
   );
 };

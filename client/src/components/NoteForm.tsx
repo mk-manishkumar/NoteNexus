@@ -5,10 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 
-const MotionInput = motion(Input);
-const MotionTextarea = motion(Textarea);
-const MotionButton = motion(Button);
-const MotionLink = motion(Link);
+const MotionInput = motion.create(Input);
+const MotionTextarea = motion.create(Textarea);
+const MotionButton = motion.create(Button);
+const MotionLink = motion.create(Link);
 
 const particles = [
   { id: 1, x: "20%", y: "30%" },
