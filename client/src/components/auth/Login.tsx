@@ -37,9 +37,11 @@ const Login: React.FC = () => {
     }
     setLoading(true);
     try {
-      await authApi.login(form);
+      const response = await authApi.login(form);
+      const username = response?.data?.user?.username;
       toast.success("Login successful!");
-      navigate("/profile");
+      setForm({ email: "", password: "" });
+      navigate(`/profile/${username}`);
     } catch (err: unknown) {
       let message = "Login failed.";
       if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) {
@@ -81,7 +83,7 @@ const Login: React.FC = () => {
           </motion.div>
 
           <motion.div variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 10 } }} className="w-full sm:w-96">
-            <Button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white w-full rounded-md px-4 py-2 mb-3 transition-colors cursor-pointer font-semibold" disabled={loading} asChild>
+            <Button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white w-full rounded-md px-4 py-2 mb-3 transition-colors cursor-pointer font-semibold" disabled={loading}>
               <motion.span whileHover={loading ? undefined : { scale: 1.04, boxShadow: "0 2px 12px #60a5fa33" }} whileTap={loading ? undefined : { scale: 0.96 }} transition={{ type: "spring", stiffness: 250, damping: 15 }} className="relative z-10">
                 {loading ? "Logging in..." : "Login"}
               </motion.span>

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { profileApi } from "@/api/api";
+import { useParams } from "react-router";
 
 const MotionInput = motion.create(Input);
 const MotionTextarea = motion.create(Textarea);
@@ -21,60 +24,52 @@ const particles = [
 
 const NoteForm: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string>("");
+  const params = useParams();
+  console.log(params);
 
+  const displayProfile = useCallback(async () => {
+    try {
+      if (!params.username) return;
+      const response = await profileApi.getProfile(params.username);
+      const name = response?.data?.user?.name;
+      if (name) {
+        setFullName(name);
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to load profile");
+    }
+
+  }, [params.username]);
+
+  useEffect(() => {
+    displayProfile();
+  }, [displayProfile]);
+
+  // ================================= ANIMATION VARIANTS ===================================
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, staggerChildren: 0.1 } },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
   const buttonVariants = {
-    hover: {
-      scale: 1.05,
-      boxShadow: "0 10px 30px rgba(74, 144, 226, 0.3)",
-      transition: { duration: 0.2 },
-    },
+    hover: { scale: 1.05, boxShadow: "0 10px 30px rgba(74, 144, 226, 0.3)", transition: { duration: 0.2 } },
     tap: { scale: 0.95 },
   };
 
   const profileButtonVariants = {
-    hover: {
-      scale: 1.05,
-      boxShadow: "0 10px 30px rgba(202, 43, 88, 0.3)",
-      background: "linear-gradient(135deg, #CA2B58, #E63578)",
-      transition: { duration: 0.2 },
-    },
+    hover: { scale: 1.05, boxShadow: "0 10px 30px rgba(202, 43, 88, 0.3)", background: "linear-gradient(135deg, #CA2B58, #E63578)", transition: { duration: 0.2 } },
     tap: { scale: 0.95 },
   };
 
   const inputVariants = {
-    focus: {
-      scale: 1.02,
-      boxShadow: "0 0 20px rgba(74, 144, 226, 0.2)",
-      borderColor: "#4A90E2",
-      transition: { duration: 0.2 },
-    },
-    blur: {
-      scale: 1,
-      boxShadow: "0 0 0px rgba(74, 144, 226, 0)",
-      borderColor: "transparent",
-      transition: { duration: 0.2 },
-    },
+    focus: { scale: 1.02, boxShadow: "0 0 20px rgba(74, 144, 226, 0.2)", borderColor: "#4A90E2", transition: { duration: 0.2 } },
+    blur: { scale: 1, boxShadow: "0 0 0px rgba(74, 144, 226, 0)", borderColor: "transparent", transition: { duration: 0.2 } },
   };
 
   return (
@@ -111,7 +106,7 @@ const NoteForm: React.FC = () => {
         {/* User Greeting and Edit Profile */}
         <motion.section className="my-8 flex flex-col gap-4 items-center justify-between mx-8 sm:flex-row" variants={itemVariants}>
           <motion.h3 className=" text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent" whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-            Hello, <span className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">John Doe</span>
+            Hello, <span className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">{fullName}</span>
           </motion.h3>
           <MotionLink to={"/profile/edit/johndoe"} className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white px-6 py-3 rounded-xl cursor-pointer font-semibold shadow-lg backdrop-blur-sm border border-pink-500/20" variants={profileButtonVariants} whileHover="hover" whileTap="tap">
             Edit Profile
