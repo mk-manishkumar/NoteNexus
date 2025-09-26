@@ -49,10 +49,11 @@ const Signup: React.FC = () => {
         ...form,
         age: Number(form.age),
       };
-      await authApi.register(payload);
+      const response = await authApi.register(payload);
+      const username = response?.data?.user?.username;
       toast.success("Registration successful!");
       setForm({ username: "", name: "", email: "", age: "", password: "" });
-      navigate("/profile");
+      navigate(`/profile/${username}`);
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) {
         toast.error(typeof err.response.data.message === "string" ? err.response.data.message : "Registration failed.");
