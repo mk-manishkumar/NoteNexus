@@ -5,13 +5,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { profileApi } from "@/api/api";
+import { notesApi, profileApi } from "@/api/api";
 import { useParams } from "react-router";
 
 const MotionInput = motion.create(Input);
 const MotionTextarea = motion.create(Textarea);
 const MotionButton = motion.create(Button);
 const MotionLink = motion.create(Link);
+
+type NoteData = {
+  title: string;
+  description: string;
+};
 
 const particles = [
   { id: 1, x: "20%", y: "30%" },
@@ -25,9 +30,20 @@ const particles = [
 const NoteForm: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string>("");
-  const params = useParams();
-  console.log(params);
+  const [noteForm, setNoteForm] = useState<NoteData>({ title: "", description: "" });
+  const [loading, setLoading] = useState(false);
 
+  const params = useParams();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNoteForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Display Profile
   const displayProfile = useCallback(async () => {
     try {
       if (!params.username) return;
@@ -39,9 +55,28 @@ const NoteForm: React.FC = () => {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to load profile");
     }
-
   }, [params.username]);
 
+  // Add Note Function
+  const addNoteHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!noteForm.title || !noteForm.description) {
+      toast.error("All fields are required.");
+      return;
+    }
+    setLoading(true);
+    try {
+      await notesApi.addNote(noteForm);
+      setNoteForm({ title: "", description: "" });
+      toast.success("Notes Added");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to add Note");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // useEffect
   useEffect(() => {
     displayProfile();
   }, [displayProfile]);
@@ -114,13 +149,15 @@ const NoteForm: React.FC = () => {
         </motion.section>
 
         {/* Add Note Form */}
-        <motion.form className="mt-12 flex flex-col items-center px-5 space-y-6" variants={itemVariants}>
+        <motion.form onSubmit={addNoteHandler} className="mt-12 flex flex-col items-center px-5 space-y-6" variants={itemVariants}>
           <motion.div className="w-full lg:w-1/3 relative">
             <MotionInput
               className="block w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-xl py-6 px-4 outline-none text-white placeholder-gray-300 shadow-lg transition-all duration-300"
               type="text"
               placeholder="Enter Title"
               name="title"
+              value={noteForm.title}
+              onChange={handleChange}
               required
               variants={inputVariants}
               animate={focusedField === "title" ? "focus" : "blur"}
@@ -138,6 +175,8 @@ const NoteForm: React.FC = () => {
             <MotionTextarea
               name="description"
               placeholder="Enter description"
+              value={noteForm.description}
+              onChange={handleChange}
               className="block w-full h-52 rounded-xl outline-none px-6 py-4 bg-white/10 backdrop-blur-md border border-white/20 resize-none text-white placeholder-gray-300 shadow-lg transition-all duration-300"
               required
               variants={inputVariants}
@@ -152,11 +191,11 @@ const NoteForm: React.FC = () => {
             <motion.div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 pointer-events-none" initial={{ opacity: 0 }} animate={{ opacity: focusedField === "description" ? 1 : 0 }} transition={{ duration: 0.2 }} />
           </motion.div>
 
-          <MotionButton className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white w-full rounded-xl p-6 lg:w-1/3 cursor-pointer font-semibold shadow-xl border border-blue-500/30 backdrop-blur-sm" type="submit" variants={buttonVariants} whileHover="hover" whileTap="tap">
-            Add Note
+          <MotionButton className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white w-full rounded-xl p-6 lg:w-1/3 cursor-pointer font-semibold shadow-xl border border-blue-500/30 backdrop-blur-sm" type="submit" variants={buttonVariants} whileHover="hover" whileTap="tap" disabled={loading}>
+            {loading ? "Adding..." : "Add Note"}
           </MotionButton>
 
-          <MotionLink className="text-blue-400 cursor-pointer font-medium hover:text-blue-300 transition-colors duration-300 relative group" to="/notes" whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
+          <MotionLink className="text-blue-400 cursor-pointer font-medium hover:text-blue-300 transition-colors duration-300 relative group" to={`/profile/${params.username}/notes`} whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
             <span className="relative z-10">Click here to see Notes.</span>
             <motion.div className="absolute inset-0 bg-blue-400/10 rounded-lg -z-0" initial={{ scale: 0, opacity: 0 }} whileHover={{ scale: 1, opacity: 1 }} transition={{ duration: 0.2 }} />
           </MotionLink>

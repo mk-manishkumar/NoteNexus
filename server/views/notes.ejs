@@ -1,65 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Notes | <%= user.name %></title>
-    <!-- css file -->
-    <link rel="stylesheet" href="/stylesheets/style.css" />
-    <!-- tailwind -->
-    <link rel="stylesheet" href="/stylesheets/tailwind.css" />
-    <!-- javascript file -->
-    <script src="/javascripts/script.js" defer></script>
-    <!-- font awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
-  </head>
-  <body data-guest-mode="<%= guestMode %>" class="flex flex-col min-h-screen">
+  <body class="flex flex-col min-h-screen">
     <div class="bg-zinc-900 w-full flex-grow">
-      <nav class="flex justify-between bg-[#CA2B58] text-white p-5">
-        <div class="logo">
-          <a href="/profile/<%= user.username %>" class="text-2xl tracking-tight ml-8 font-[cursive]">NoteNexus</a>
-        </div>
-
-        <!-- Hamburger Icon (hidden on md and above) -->
-        <div class="hamburger md:hidden flex items-center mr-8">
-          <button class="menu-toggle">
-            <i class="fa-solid fa-bars text-2xl"></i>
-          </button>
-        </div>
-
-        <div class="nav-items md:flex gap-8 mr-8 text-md hidden">
-          <a href="/notes">NOTES</a>
-          <a href="/bin">BIN</a>
-          <a href="/archive">ARCHIVE</a>
-          <form action="/logout" method="post">
-            <button type="submit"><i class="fa-solid fa-right-from-bracket"></i></button>
-          </form>
-        </div>
-      </nav>
-
-      <!-- Mobile Menu (for small screens) -->
-      <div class="hidden mobile-menu">
-        <div class="flex text-xl font-semibold justify-between p-4 text-white bg-blue-500 md:hidden">
-          <a href="/notes">NOTES</a>
-          <a href="/bin">BIN</a>
-          <a href="/archive">ARCHIVE</a>
-          <form action="/logout" method="post">
-            <button type="submit">LOG OUT</button>
-          </form>
-        </div>
-      </div>
-
       <div class="search-bar text-center mt-5 px-5">
         <form action="/notes/search-notes" method="get">
           <input type="search" name="search" class="w-full sm:w-96 px-4 py-2 rounded-3xl text-black outline-none" placeholder="Search for notes..." />
           <button type="submit" class="searchIcon"><i class="fa-solid fa-magnifying-glass text-black"></i></button>
         </form>
       </div>
-
-      <!-- Display error message if present -->
-      <% if (error) { %>
-      <p class="text-red-500 mt-2 mb-4 text-center"><%= error %></p>
-      <% } %>
 
       <section class="my-8 mx-5 flex flex-col sm:flex-row gap-4 text-center justify-between">
         <h3 class="text-white text-2xl">Your notes are here, <span class="text-[#CA2B58]"><%= user.name %></span></h3>

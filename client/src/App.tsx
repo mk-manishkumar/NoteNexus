@@ -4,6 +4,9 @@ import Signup from "./components/auth/Signup";
 import Login from "./components/auth/Login";
 import Profile from "./components/Profile";
 import { ToastContainer } from "react-toastify";
+import NotesPage from "./components/NotesPage";
+import BinPage from "./components/BinPage";
+import ArchivePage from "./components/ArchivePage";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +20,18 @@ const router = createBrowserRouter([
   {
     path: "/profile/:username",
     element: <Profile />,
+  },
+  {
+    path: "/profile/:username/notes",
+    element: <NotesPage />,
+  },
+  {
+    path: "/profile/:username/bin",
+    element: <BinPage />,
+  },
+  {
+    path: "/profile/:username/archive",
+    element: <ArchivePage />,
   },
 ]);
 

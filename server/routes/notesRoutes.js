@@ -15,7 +15,7 @@ notesRouter.get("/", fetchNotes);
 notesRouter.post("/addnotes", addNote);
 
 // Handle deleting (moving to bin)
-notesRouter.post("/deletenote", deleteNote);
+notesRouter.post("/:noteId", deleteNote);
 
 // Handle archiving notes
 notesRouter.post("/archivenote", archiveNote);

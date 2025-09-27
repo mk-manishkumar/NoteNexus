@@ -33,7 +33,7 @@ export const profileApi = {
 // Notes API
 export const notesApi = {
   fetchNotes: () => api.get("/notes"),
-  addNote: (data: { title: string; description: string }) => api.post("/notes", data),
+  addNote: (data: { title: string; description: string }) => api.post("/notes/addnotes", data),
   deleteNote: (noteId: string) => api.delete(`/notes/${noteId}`),
   archiveNote: (noteId: string) => api.put(`/notes/${noteId}/archive`),
   clearAllNotes: () => api.delete("/notes"),
