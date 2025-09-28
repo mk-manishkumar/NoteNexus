@@ -12,13 +12,13 @@ binRouter.use(guestRestrictions);
 binRouter.get("/", fetchDeletedNotes);
 
 // Route to restore a note from bin
-binRouter.post("/restorefrombin", restoreFromBin);
+binRouter.put("/restorenote/:noteId", restoreFromBin);
 
 // Route to delete a note from bin
-binRouter.post("/deletefrombin", deleteFromBin);
+binRouter.delete("/deletenote/:noteId", deleteFromBin);
 
 // Route to clear all notes in the bin
-binRouter.post("/clearbin", clearBin);
+binRouter.delete("/clearbin", clearBin);
 
 // Route for searching notes in bin
 binRouter.get("/search-deleted-notes", searchBin);

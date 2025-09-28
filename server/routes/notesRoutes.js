@@ -15,13 +15,13 @@ notesRouter.get("/", fetchNotes);
 notesRouter.post("/addnotes", addNote);
 
 // Handle deleting (moving to bin)
-notesRouter.post("/:noteId", deleteNote);
+notesRouter.delete("/delete/:noteId", deleteNote);
 
 // Handle archiving notes
-notesRouter.post("/archivenote", archiveNote);
+notesRouter.post("/archive/:noteId", archiveNote);
 
 // Route for clearing all notes
-notesRouter.post("/clearnotes", clearAllNotes);
+notesRouter.delete("/clearnotes", clearAllNotes);
 
 // ROute for searching a particular note
 notesRouter.get("/search-notes", searchNotes);
@@ -33,6 +33,6 @@ notesRouter.get("/:slug", openNote);
 notesRouter.get("/edit/:slug", getEditNote);
 
 // Route to handle the note update
-notesRouter.post("/edit/:slug", updateNote);
+notesRouter.put("/edit/:slug", updateNote);
 
 export default notesRouter;

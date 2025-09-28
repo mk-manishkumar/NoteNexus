@@ -59,7 +59,7 @@ export const addNote = async (req, res) => {
 // Move note to bin (soft-delete)
 export const deleteNote = async (req, res) => {
   try {
-    const { noteId } = req.body;
+    const { noteId } = req.params;
     const userId = req.user.id;
 
     const note = await Notes.findOneAndUpdate({ _id: noteId, user: userId }, { isDeleted: true, isArchived: false }, { new: true });
@@ -76,7 +76,7 @@ export const deleteNote = async (req, res) => {
 // Archive note
 export const archiveNote = async (req, res) => {
   try {
-    const { noteId } = req.body;
+    const { noteId } = req.params;
     const userId = req.user.id;
 
     const note = await Notes.findOneAndUpdate({ _id: noteId, user: userId }, { isArchived: true, isDeleted: false }, { new: true });
