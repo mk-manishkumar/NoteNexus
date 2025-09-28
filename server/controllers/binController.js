@@ -20,7 +20,7 @@ export const fetchDeletedNotes = async (req, res) => {
 // Restore note from bin (soft undelete)
 export const restoreFromBin = async (req, res) => {
   try {
-    const { noteId } = req.body;
+    const { noteId } = req.params;
     const userId = req.user.id;
 
     const note = await Notes.findOneAndUpdate({ _id: noteId, user: userId, isDeleted: true }, { isDeleted: false }, { new: true });
@@ -37,7 +37,7 @@ export const restoreFromBin = async (req, res) => {
 // Permanently delete note from bin
 export const deleteFromBin = async (req, res) => {
   try {
-    const { noteId } = req.body;
+    const { noteId } = req.params;
     const userId = req.user.id;
 
     const deletedNote = await Notes.findOneAndDelete({ _id: noteId, user: userId, isDeleted: true });

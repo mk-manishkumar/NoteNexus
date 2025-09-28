@@ -7,33 +7,46 @@ import { ToastContainer } from "react-toastify";
 import NotesPage from "./components/NotesPage";
 import BinPage from "./components/BinPage";
 import ArchivePage from "./components/ArchivePage";
+import ErrorPage from "./components/ErrorPage";
+
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Signup />,
+    errorElement: <ErrorPage code={500} />,
   },
   {
     path: "/login",
     element: <Login />,
+    errorElement: <ErrorPage code={500} />,
   },
   {
     path: "/profile/:username",
     element: <Profile />,
+    errorElement: <ErrorPage code={500} />,
   },
   {
     path: "/profile/:username/notes",
     element: <NotesPage />,
+    errorElement: <ErrorPage code={500} />,
   },
   {
     path: "/profile/:username/bin",
     element: <BinPage />,
+    errorElement: <ErrorPage code={500} />,
   },
   {
     path: "/profile/:username/archive",
     element: <ArchivePage />,
+    errorElement: <ErrorPage code={500} />,
+  },
+  {
+    path: "*",
+    element: <ErrorPage code={404} />,
   },
 ]);
+
 
 const App = () => {
   return (

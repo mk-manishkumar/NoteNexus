@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { notesApi, profileApi } from "@/api/api";
+import { notesApi } from "@/api/api";
 import { useParams } from "react-router";
+import { useUserProfile } from "@/customHooks/useUserProfile";
 
 const MotionInput = motion.create(Input);
 const MotionTextarea = motion.create(Textarea);
@@ -29,11 +30,11 @@ const particles = [
 
 const NoteForm: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [fullName, setFullName] = useState<string>("");
   const [noteForm, setNoteForm] = useState<NoteData>({ title: "", description: "" });
   const [loading, setLoading] = useState(false);
 
   const params = useParams();
+  const { profile } = useUserProfile(params.username);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -42,20 +43,6 @@ const NoteForm: React.FC = () => {
       [name]: value,
     }));
   };
-
-  // Display Profile
-  const displayProfile = useCallback(async () => {
-    try {
-      if (!params.username) return;
-      const response = await profileApi.getProfile(params.username);
-      const name = response?.data?.user?.name;
-      if (name) {
-        setFullName(name);
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to load profile");
-    }
-  }, [params.username]);
 
   // Add Note Function
   const addNoteHandler = async (e: React.FormEvent) => {
@@ -75,11 +62,6 @@ const NoteForm: React.FC = () => {
       setLoading(false);
     }
   };
-
-  // useEffect
-  useEffect(() => {
-    displayProfile();
-  }, [displayProfile]);
 
   // ================================= ANIMATION VARIANTS ===================================
   const containerVariants = {
@@ -141,7 +123,7 @@ const NoteForm: React.FC = () => {
         {/* User Greeting and Edit Profile */}
         <motion.section className="my-8 flex flex-col gap-4 items-center justify-between mx-8 sm:flex-row" variants={itemVariants}>
           <motion.h3 className=" text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent" whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-            Hello, <span className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">{fullName}</span>
+            Hello, <span className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">{profile?.name}</span>
           </motion.h3>
           <MotionLink to={"/profile/edit/johndoe"} className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white px-6 py-3 rounded-xl cursor-pointer font-semibold shadow-lg backdrop-blur-sm border border-pink-500/20" variants={profileButtonVariants} whileHover="hover" whileTap="tap">
             Edit Profile

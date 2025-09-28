@@ -34,9 +34,9 @@ export const profileApi = {
 export const notesApi = {
   fetchNotes: () => api.get("/notes"),
   addNote: (data: { title: string; description: string }) => api.post("/notes/addnotes", data),
-  deleteNote: (noteId: string) => api.delete(`/notes/${noteId}`),
-  archiveNote: (noteId: string) => api.put(`/notes/${noteId}/archive`),
-  clearAllNotes: () => api.delete("/notes"),
+  deleteNote: (noteId: string) => api.delete(`/notes/delete/${noteId}`),
+  archiveNote: (noteId: string) => api.post(`/notes/archive/${noteId}`),
+  clearAllNotes: () => api.delete("/notes/clearnotes"),
   getNote: (slug: string) => api.get(`/notes/${slug}`),
   updateNote: (slug: string, data: { title: string; description: string }) => api.put(`/notes/${slug}`, data),
   searchNotes: (query: string) => api.get(`/notes/search`, { params: { search: query } }),
@@ -45,18 +45,18 @@ export const notesApi = {
 // Bin API
 export const binApi = {
   fetchDeletedNotes: () => api.get("/bin"),
-  restoreFromBin: (noteId: string) => api.put(`/bin/${noteId}/restore`),
-  deleteFromBin: (noteId: string) => api.delete(`/bin/${noteId}`),
-  clearBin: () => api.delete("/bin"),
+  restoreFromBin: (noteId: string) => api.put(`/bin/restorenote/${noteId}`),
+  deleteFromBin: (noteId: string) => api.delete(`/bin/deletenote/${noteId}`),
+  clearBin: () => api.delete("/bin/clearbin"),
   searchBin: (query: string) => api.get(`/bin/search`, { params: { search: query } }),
 };
 
 // Archive API
 export const archiveApi = {
   fetchArchivedNotes: () => api.get("/archive"),
-  deleteFromArchive: (noteId: string) => api.delete(`/archive/${noteId}`),
-  restoreFromArchive: (noteId: string) => api.put(`/archive/${noteId}/restore`),
-  clearArchive: () => api.delete("/archive"),
+  deleteFromArchive: (noteId: string) => api.delete(`/archive/deletefromarchive/${noteId}`),
+  restoreFromArchive: (noteId: string) => api.put(`/archive/restorfromarchive/${noteId}`),
+  clearArchive: () => api.delete("/archive/cleararchive"),
   searchArchive: (query: string) => api.get(`/archive/search`, { params: { q: query } }),
 };
 

@@ -2,21 +2,22 @@ import React, { useCallback, useEffect, useState } from "react";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
 import { Link, useParams } from "react-router-dom";
-import { notesApi, profileApi } from "@/api/api";
+import { notesApi } from "@/api/api";
 import { toast } from "react-toastify";
 import Searchbar from "./Searchbar";
 import { Button } from "./ui/button";
+import { useUserProfile } from "@/customHooks/useUserProfile";
+
+type Note = {
+  _id: string;
+  title: string;
+  description: string;
+  slug: string;
+};
 
 const NotesPage: React.FC = () => {
   const params = useParams();
-  const [personName, setPersonName] = useState("");
-  type Note = {
-    _id: string;
-    title: string;
-    description: string;
-    slug: string;
-  };
-
+  const { profile } = useUserProfile(params.username);
   const [notes, setNotes] = useState<Note[]>([]);
 
   const displayNotes = useCallback(async () => {
@@ -33,52 +34,35 @@ const NotesPage: React.FC = () => {
     displayNotes();
   }, [displayNotes]);
 
-  const displayProfile = useCallback(async () => {
-    try {
-      if (!params.username) return;
-      const response = await profileApi.getProfile(params.username);
-      const name = response?.data?.user?.name;
-      setPersonName(name);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to load profile");
-    }
-  }, [params.username]);
-
-  useEffect(() => {
-    displayProfile();
-  }, [displayProfile]);
-
   const deleteNote = async (noteId: string) => {
     try {
-      console.log(noteId);
-      const response = await notesApi.deleteNote(noteId);
-      console.log(response);
-      
+      await notesApi.deleteNote(noteId);
+      toast.success("Note Deleted");
+      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete the note");
     }
   };
 
-  const archiveNote = async () => {
+  const archiveNote = async (noteId: string) => {
     try {
-      const response = await notesApi.archiveNote(notes._id);
-
+      await notesApi.archiveNote(noteId);
+      toast.success("Note Archived");
+      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to archive the note");
     }
-  }
+  };
 
   const clearNotesPage = async () => {
     try {
-      
+      await notesApi.clearAllNotes();
+      toast.success("All Notes Deleted");
+      setNotes([]);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to clear the note page");
-      
     }
-  }
-  
-  
-  
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -90,9 +74,11 @@ const NotesPage: React.FC = () => {
         {/* Notes Header */}
         <section className="my-8 mx-5 flex flex-col sm:flex-row gap-4 text-center justify-between items-center">
           <h3 className="text-white text-2xl">
-            Your notes are here, <span className="text-[#CA2B58]">{personName}</span>
+            Your notes are here, <span className="text-[#CA2B58]">{profile?.name}</span>
           </h3>
-          <Button onClick={clearNotesPage} className="bg-[#CA2B58] hover:bg-red-800 px-4 py-2 text-white rounded-md cursor-pointer">Clear All</Button>
+          <Button onClick={clearNotesPage} className="bg-[#CA2B58] hover:bg-red-800 px-4 py-2 text-white rounded-md cursor-pointer">
+            Clear All
+          </Button>
         </section>
 
         {/* Notes List */}
@@ -101,13 +87,17 @@ const NotesPage: React.FC = () => {
             <ul className="list-none flex gap-5 flex-wrap justify-center xl:justify-start">
               {notes.map((note) => (
                 <li key={note._id} className="p-4 mb-2 rounded-md w-96 overflow-hidden bg-zinc-800 text-zinc-400">
-                  <Link to={`/notes/${note.slug}`} className="font-bold text-2xl mb-2 inline-block text-blue-500">
+                  <Link to={`/notes/${note.slug}`} className="font-bold text-2xl mb-2 inline-block text-blue-500 hover:underline">
                     {note.title}
                   </Link>
                   <p className="h-24 overflow-hidden">{note.description}</p>
                   <div className="btns mt-5 flex justify-between">
-                    <Button onClick={deleteNote} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors duration-200">Delete</Button>
-                    <Button onClick={archiveNote} className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded cursor-pointer transition-colors duration-200">Archive</Button>
+                    <Button onClick={() => deleteNote(note._id)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded cursor-pointer transition-colors duration-200">
+                      Delete
+                    </Button>
+                    <Button onClick={() => archiveNote(note._id)} className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded cursor-pointer transition-colors duration-200">
+                      Archive
+                    </Button>
                   </div>
                 </li>
               ))}
