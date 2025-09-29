@@ -15,7 +15,7 @@ profileRouter.get("/:username", displayProfile);
 profileRouter.get("/edit/:username", displayEditProfile);
 
 // to updated changes in profile
-profileRouter.post("/edit/:username", updateProfile);
+profileRouter.put("/edit/:username", updateProfile);
 
 // to display change password page
 profileRouter.get("/:username/change-password", changePassword);
