@@ -26,7 +26,8 @@ const NotesPage: React.FC = () => {
       const noteList = response?.data?.notes || [];
       setNotes(noteList);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to fetch Notes");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to fetch Notes");
     }
   }, []);
 
@@ -40,7 +41,8 @@ const NotesPage: React.FC = () => {
       toast.success("Note Deleted");
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete the note");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to delete the note");
     }
   };
 
@@ -50,7 +52,8 @@ const NotesPage: React.FC = () => {
       toast.success("Note Archived");
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to archive the note");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to archive the note");
     }
   };
 
@@ -60,17 +63,16 @@ const NotesPage: React.FC = () => {
       toast.success("All Notes Deleted");
       setNotes([]);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to clear the note page");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to clear the note page");
     }
   };
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-
       <div className="bg-zinc-900 w-full flex-grow p-5">
         <Searchbar />
-
         {/* Notes Header */}
         <section className="my-8 mx-5 flex flex-col sm:flex-row gap-4 text-center justify-between items-center">
           <h3 className="text-white text-2xl">
@@ -80,14 +82,13 @@ const NotesPage: React.FC = () => {
             Clear All
           </Button>
         </section>
-
         {/* Notes List */}
         <div className="notes p-5 w-full xl:w-[77rem] mx-auto">
           {notes.length > 0 ? (
             <ul className="list-none flex gap-5 flex-wrap justify-center xl:justify-start">
               {notes.map((note) => (
                 <li key={note._id} className="p-4 mb-2 rounded-md w-96 overflow-hidden bg-zinc-800 text-zinc-400">
-                  <Link to={`/notes/${note.slug}`} className="font-bold text-2xl mb-2 inline-block text-blue-500 hover:underline">
+                  <Link to={`/profile/${params.username}/note/${note.slug}`} className="font-bold text-2xl mb-2 inline-block text-blue-500 hover:underline">
                     {note.title}
                   </Link>
                   <p className="h-24 overflow-hidden">{note.description}</p>
@@ -107,7 +108,6 @@ const NotesPage: React.FC = () => {
           )}
         </div>
       </div>
-
       <Footer />
     </div>
   );

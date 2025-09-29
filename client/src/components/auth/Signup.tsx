@@ -54,12 +54,9 @@ const Signup: React.FC = () => {
       toast.success("Registration successful!");
       setForm({ username: "", name: "", email: "", age: "", password: "" });
       navigate(`/profile/${username}`);
-    } catch (err: unknown) {
-      if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) {
-        toast.error(typeof err.response.data.message === "string" ? err.response.data.message : "Registration failed.");
-      } else {
-        toast.error("Registration failed.");
-      }
+    } catch (error) {
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Registration failed.");
     } finally {
       setLoading(false);
     }

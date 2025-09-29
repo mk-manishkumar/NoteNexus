@@ -33,6 +33,6 @@ notesRouter.get("/:slug", openNote);
 notesRouter.get("/edit/:slug", getEditNote);
 
 // Route to handle the note update
-notesRouter.put("/edit/:slug", updateNote);
+notesRouter.put("/update/:slug", updateNote);
 
 export default notesRouter;

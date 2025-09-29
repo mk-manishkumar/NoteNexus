@@ -12,10 +12,10 @@ archiveRouter.use(guestRestrictions);
 archiveRouter.get("/", fetchArchivedNotes);
 
 // Route to archive a note
-archiveRouter.delete("/deletefromarchive/:noteId", deleteFromArchive);
+archiveRouter.delete("/deletefromarchive/:id", deleteFromArchive);
 
 // Route to restore a note from the archive
-archiveRouter.post("/restorfromarchive/:noteId", restoreFromArchive);
+archiveRouter.post("/restorefromarchive/:id", restoreFromArchive);
 
 // Route to clear all notes from the archive
 archiveRouter.delete("/cleararchive", clearArchive);

@@ -18,7 +18,7 @@ const Header: React.FC = () => {
       navigate("/login");
     } catch (error) {
       toast.error("Logout failed. Please try again.");
-      console.error("Logout error:", error);
+      if (import.meta.env.VITE_ENV === "development") console.error("Logout error:", error);
     }
   };
 
