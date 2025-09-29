@@ -8,6 +8,9 @@ import NotesPage from "./components/NotesPage";
 import BinPage from "./components/BinPage";
 import ArchivePage from "./components/ArchivePage";
 import ErrorPage from "./components/ErrorPage";
+import EditProfilePage from "./components/EditProfilePage";
+import NoteDetails from "./components/NoteDetails";
+import EditNote from "./components/EditNote";
 
 
 const router = createBrowserRouter([
@@ -39,6 +42,21 @@ const router = createBrowserRouter([
   {
     path: "/profile/:username/archive",
     element: <ArchivePage />,
+    errorElement: <ErrorPage code={500} />,
+  },
+  {
+    path: "/profile/:username/editprofile",
+    element: <EditProfilePage />,
+    errorElement: <ErrorPage code={500} />,
+  },
+  {
+    path: "/profile/:username/note/:noteid",
+    element: <NoteDetails />,
+    errorElement: <ErrorPage code={500} />,
+  },
+  {
+    path: "/profile/:username/editnote/:noteid",
+    element: <EditNote />,
     errorElement: <ErrorPage code={500} />,
   },
   {

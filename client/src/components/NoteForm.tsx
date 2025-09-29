@@ -57,7 +57,8 @@ const NoteForm: React.FC = () => {
       setNoteForm({ title: "", description: "" });
       toast.success("Notes Added");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to add Note");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to add Note");
     } finally {
       setLoading(false);
     }
@@ -125,7 +126,7 @@ const NoteForm: React.FC = () => {
           <motion.h3 className=" text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent" whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
             Hello, <span className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">{profile?.name}</span>
           </motion.h3>
-          <MotionLink to={"/profile/edit/johndoe"} className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white px-6 py-3 rounded-xl cursor-pointer font-semibold shadow-lg backdrop-blur-sm border border-pink-500/20" variants={profileButtonVariants} whileHover="hover" whileTap="tap">
+          <MotionLink to={`/profile/${params.username}/editprofile`} className="bg-gradient-to-r from-[#CA2B58] to-[#E63578] text-white px-6 py-3 rounded-xl cursor-pointer font-semibold shadow-lg backdrop-blur-sm border border-pink-500/20" variants={profileButtonVariants} whileHover="hover" whileTap="tap">
             Edit Profile
           </MotionLink>
         </motion.section>

@@ -38,7 +38,7 @@ export const notesApi = {
   archiveNote: (noteId: string) => api.post(`/notes/archive/${noteId}`),
   clearAllNotes: () => api.delete("/notes/clearnotes"),
   getNote: (slug: string) => api.get(`/notes/${slug}`),
-  updateNote: (slug: string, data: { title: string; description: string }) => api.put(`/notes/${slug}`, data),
+  updateNote: (slug: string, data: { title: string; description: string }) => api.put(`/notes/update/${slug}`, data),
   searchNotes: (query: string) => api.get(`/notes/search`, { params: { search: query } }),
 };
 
@@ -55,7 +55,7 @@ export const binApi = {
 export const archiveApi = {
   fetchArchivedNotes: () => api.get("/archive"),
   deleteFromArchive: (noteId: string) => api.delete(`/archive/deletefromarchive/${noteId}`),
-  restoreFromArchive: (noteId: string) => api.put(`/archive/restorfromarchive/${noteId}`),
+  restoreFromArchive: (noteId: string) => api.post(`/archive/restorefromarchive/${noteId}`),
   clearArchive: () => api.delete("/archive/cleararchive"),
   searchArchive: (query: string) => api.get(`/archive/search`, { params: { q: query } }),
 };

@@ -42,13 +42,9 @@ const Login: React.FC = () => {
       toast.success("Login successful!");
       setForm({ email: "", password: "" });
       navigate(`/profile/${username}`);
-    } catch (err: unknown) {
-      let message = "Login failed.";
-      if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) {
-        // @ts-expect-error: TypeScript can't infer the structure here
-        message = err.response.data.message || message;
-      }
-      toast.error(message);
+    } catch (error) {
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Incorrect email and password");
     } finally {
       setLoading(false);
     }

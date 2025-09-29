@@ -22,7 +22,8 @@ const ArchivePage: React.FC = () => {
       const archiveNotesList = response?.data?.notes;
       setNotes(archiveNotesList);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to fetch Archived Notes");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to fetch Archived Notes");
     }
   }, []);
 
@@ -36,7 +37,8 @@ const ArchivePage: React.FC = () => {
       toast.success("Note Restored");
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to restore the note");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to restore the note");
     }
   };
 
@@ -46,17 +48,19 @@ const ArchivePage: React.FC = () => {
       toast.success("Note Deleted");
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete the note");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to delete the note");
     }
   };
 
   const clearArchivePage = async () => {
     try {
       await archiveApi.clearArchive();
-      toast.success("All Notes in Bin Deleted");
+      toast.success("All Notes in Archive Deleted");
       setNotes([]);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to clear the bin page");
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Failed to clear the bin page");
     }
   };
 
