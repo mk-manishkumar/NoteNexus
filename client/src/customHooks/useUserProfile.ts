@@ -2,8 +2,15 @@ import { useState, useEffect } from "react";
 import { profileApi } from "@/api/api";
 import { toast } from "react-toastify";
 
+export interface UserProfile {
+  username: string;
+  name: string;
+  email: string;
+  age: number;
+}
+
 export function useUserProfile(username?: string) {
-  const [profile, setProfile] = useState<{ name: string } | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

@@ -23,7 +23,7 @@ export const authApi = {
 export const profileApi = {
   getProfile: (username: string) => api.get(`/profile/${username}`),
   updateProfile: (username: string, data: { username: string; age: number; name: string; email: string }) =>
-    api.put(`/profile/${username}`, data),
+    api.put(`/profile/edit/${username}`, data),
   changePassword: (username: string, data: { oldPassword: string; newPassword: string }) =>
     api.put(`/profile/${username}/change-password`, data),
   deleteProfile: (username: string, data: { password: string }) =>

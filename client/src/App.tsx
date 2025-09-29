@@ -11,6 +11,8 @@ import ErrorPage from "./components/ErrorPage";
 import EditProfilePage from "./components/EditProfilePage";
 import NoteDetails from "./components/NoteDetails";
 import EditNote from "./components/EditNote";
+import ChangePasswordPage from "./components/ChangePasswordPage";
+import DeleteProfilePage from "./components/DeleteProfilePage";
 
 
 const router = createBrowserRouter([
@@ -57,6 +59,16 @@ const router = createBrowserRouter([
   {
     path: "/profile/:username/editnote/:noteid",
     element: <EditNote />,
+    errorElement: <ErrorPage code={500} />,
+  },
+  {
+    path: "/profile/:username/changepassword",
+    element: <ChangePasswordPage />,
+    errorElement: <ErrorPage code={500} />,
+  },
+  {
+    path: "/profile/:username/deleteprofile",
+    element: <DeleteProfilePage />,
     errorElement: <ErrorPage code={500} />,
   },
   {

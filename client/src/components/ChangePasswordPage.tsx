@@ -1,39 +1,97 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
 
 const ChangePasswordPage: React.FC = () => {
-  const guestMode = false; // set to true to simulate guest mode
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <div className="bg-zinc-900 w-full flex-grow">
-        <section className="my-8">
-          <h3 className="text-3xl text-[#CA2B58] ml-5">Change Password</h3>
-        </section>
 
-        <div className="edit-list px-5">
-          <form className="mb-5">
-            <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <label htmlFor="oldPassword" className="text-white w-32">
-                Old Password
-              </label>
-              <input type="password" name="oldPassword" className="w-full sm:w-96 bg-zinc-800 text-zinc-400 p-2 rounded-md outline-none" required />
-            </div>
-            <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <label htmlFor="newPassword" className="text-white w-32">
-                New Password
-              </label>
-              <input type="password" name="newPassword" className="w-full sm:w-96 bg-zinc-800 text-zinc-400 p-2 rounded-md" required />
-            </div>
+      <div className="bg-zinc-900 w-full flex-grow p-8 flex items-center justify-center">
+        <div className="max-w-2xl mx-auto w-full">
+          {/* Header Section */}
+          <div className="mb-8 text-center">
+            <h3 className="text-4xl font-bold bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">Change Password</h3>
+            <p className="text-gray-400 mt-2">Update your password to keep your account secure</p>
+          </div>
 
-            <button type="submit" className={`px-4 py-2 rounded-md mt-5 ${guestMode ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-500 text-black"}`} disabled={guestMode} title={guestMode ? "Not available for guest users" : undefined}>
-              Save Changes
-            </button>
-          </form>
+          {/* Form Container */}
+          <div className="relative">
+            {/* Glowing background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-xl"></div>
+
+            <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-2xl">
+              <form>
+                {/* Old Password Field */}
+                <div className="mb-6">
+                  <Label htmlFor="oldPassword" className="block text-white font-semibold mb-4">
+                    Old Password
+                  </Label>
+                  <Input
+                    type="password"
+                    name="oldPassword"
+                    id="oldPassword"
+                    className={`
+                      w-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 
+                      px-4 py-7 rounded-xl outline-none border border-white/20
+                      transition-all duration-300
+                      ${focusedField === "oldPassword" ? "border-pink-400 shadow-lg shadow-pink-500/25 bg-white/15" : "hover:border-white/30"}
+                    `}
+                    placeholder="Enter your current password"
+                    onFocus={() => setFocusedField("oldPassword")}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                  />
+                </div>
+
+                {/* New Password Field */}
+                <div className="mb-8">
+                  <Label htmlFor="newPassword" className="block text-white font-semibold mb-4">
+                    New Password
+                  </Label>
+                  <Input
+                    type="password"
+                    name="newPassword"
+                    id="newPassword"
+                    className={`
+                      w-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 
+                      px-4 py-7 rounded-xl outline-none border border-white/20
+                      transition-all duration-300
+                      ${focusedField === "newPassword" ? "border-pink-400 shadow-lg shadow-pink-500/25 bg-white/15" : "hover:border-white/30"}
+                    `}
+                    placeholder="Enter your new password"
+                    onFocus={() => setFocusedField("newPassword")}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className="
+                    w-full bg-gradient-to-r from-yellow-500 to-orange-500 
+                    hover:from-yellow-400 hover:to-orange-400
+                    text-black font-semibold px-6 py-4 rounded-xl
+                    transition-all duration-300
+                    hover:shadow-lg hover:shadow-yellow-500/30
+                    hover:scale-105 active:scale-95
+                    overflow-hidden group relative
+                  "
+                >
+                  <span className="relative z-10">Save Changes</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );

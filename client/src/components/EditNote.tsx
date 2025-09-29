@@ -5,6 +5,9 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { notesApi } from "@/api/api";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { Label } from "./ui/label";
 
 type Note = {
   title: string;
@@ -77,18 +80,18 @@ const EditNote: React.FC = () => {
             <div className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
               {/* Title Field */}
               <div className="mb-6 relative group">
-                <label htmlFor="title" className="block mb-3 text-white font-semibold text-lg">
+                <Label htmlFor="title" className="block mb-3 text-white font-semibold text-lg">
                   Title
-                </label>
+                </Label>
                 <div className="relative">
-                  <input
+                  <Input
                     type="text"
                     name="title"
                     id="title"
                     defaultValue={note.title}
                     className={`
                       w-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 
-                      p-4 rounded-xl outline-none border border-white/20
+                      px-4 py-7 rounded-xl outline-none border border-white/20
                       transition-all duration-300
                       ${focusedField === "title" ? "border-green-400 shadow-lg shadow-green-500/25 bg-white/15" : "hover:border-white/30"}
                     `}
@@ -103,11 +106,11 @@ const EditNote: React.FC = () => {
 
               {/* Description Field */}
               <div className="mb-8 relative group">
-                <label htmlFor="description" className="block mb-3 text-white font-semibold text-lg">
+                <Label htmlFor="description" className="block mb-3 text-white font-semibold text-lg">
                   Description
-                </label>
+                </Label>
                 <div className="relative">
-                  <textarea
+                  <Textarea
                     id="description"
                     name="description"
                     defaultValue={note.description}
