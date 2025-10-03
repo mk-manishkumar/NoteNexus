@@ -4,7 +4,11 @@ import Footer from "./shared/Footer";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { toast } from "react-toastify";
+<<<<<<< HEAD
+import { profileApi } from "@/api/api"; 
+=======
 import { profileApi } from "@/api/api"; // import your API utility path as needed
+>>>>>>> 8400acb0eaf522ce54f29fbe9e5311e5c0bdae67
 
 const ChangePasswordPage: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -22,9 +26,13 @@ const ChangePasswordPage: React.FC = () => {
 
     setLoading(true);
     try {
+<<<<<<< HEAD
+      await profileApi.changePassword({ oldPassword, newPassword });
+=======
       // Adjust API call as needed per your backend
       const response = await profileApi.changePassword({ oldPassword, newPassword });
       // Optionally check response and show detailed success
+>>>>>>> 8400acb0eaf522ce54f29fbe9e5311e5c0bdae67
       toast.success("Password changed successfully");
     } catch (error) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
