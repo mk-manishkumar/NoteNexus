@@ -4,7 +4,11 @@ import Footer from "./shared/Footer";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { toast } from "react-toastify";
+<<<<<<< HEAD
 import { profileApi } from "@/api/api"; 
+=======
+import { profileApi } from "@/api/api"; // import your API utility path as needed
+>>>>>>> 8400acb0eaf522ce54f29fbe9e5311e5c0bdae67
 
 const ChangePasswordPage: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -22,7 +26,13 @@ const ChangePasswordPage: React.FC = () => {
 
     setLoading(true);
     try {
+<<<<<<< HEAD
       await profileApi.changePassword({ oldPassword, newPassword });
+=======
+      // Adjust API call as needed per your backend
+      const response = await profileApi.changePassword({ oldPassword, newPassword });
+      // Optionally check response and show detailed success
+>>>>>>> 8400acb0eaf522ce54f29fbe9e5311e5c0bdae67
       toast.success("Password changed successfully");
     } catch (error) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
@@ -40,7 +50,9 @@ const ChangePasswordPage: React.FC = () => {
       <div className="bg-zinc-900 w-full flex-grow p-8 flex items-center justify-center">
         <div className="max-w-2xl mx-auto w-full">
           <div className="mb-8 text-center">
-            <h3 className="text-4xl font-bold bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">Change Password</h3>
+            <h3 className="text-4xl font-bold bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">
+              Change Password
+            </h3>
             <p className="text-gray-400 mt-2">Update your password to keep your account secure</p>
           </div>
 
