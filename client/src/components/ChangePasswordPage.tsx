@@ -4,11 +4,8 @@ import Footer from "./shared/Footer";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { toast } from "react-toastify";
-<<<<<<< HEAD
-import { profileApi } from "@/api/api"; 
-=======
-import { profileApi } from "@/api/api"; // import your API utility path as needed
->>>>>>> 8400acb0eaf522ce54f29fbe9e5311e5c0bdae67
+import { profileApi } from "@/api/api";
+import { Button } from "./ui/button";
 
 const ChangePasswordPage: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -26,13 +23,7 @@ const ChangePasswordPage: React.FC = () => {
 
     setLoading(true);
     try {
-<<<<<<< HEAD
       await profileApi.changePassword({ oldPassword, newPassword });
-=======
-      // Adjust API call as needed per your backend
-      const response = await profileApi.changePassword({ oldPassword, newPassword });
-      // Optionally check response and show detailed success
->>>>>>> 8400acb0eaf522ce54f29fbe9e5311e5c0bdae67
       toast.success("Password changed successfully");
     } catch (error) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
@@ -58,7 +49,6 @@ const ChangePasswordPage: React.FC = () => {
 
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-xl"></div>
-
             <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-2xl">
               <form onSubmit={submitHandler}>
                 <div className="mb-6">
@@ -109,7 +99,7 @@ const ChangePasswordPage: React.FC = () => {
                   />
                 </div>
 
-                <button
+                <Button
                   type="submit"
                   disabled={loading}
                   className={`
@@ -125,7 +115,7 @@ const ChangePasswordPage: React.FC = () => {
                 >
                   <span className="relative z-10">{loading ? "Saving..." : "Save Changes"}</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                </button>
+                </Button>
               </form>
             </div>
           </div>
