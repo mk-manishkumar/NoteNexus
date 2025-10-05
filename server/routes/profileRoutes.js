@@ -21,7 +21,7 @@ profileRouter.put("/edit/:username", updateProfile);
 profileRouter.get("/:username/change-password", changePassword);
 
 // to update password
-profileRouter.post("/:username/update-password", updatePassword);
+profileRouter.put("/:username/change-password", updatePassword);
 
 // to display delete profile page
 profileRouter.get("/:username/delete-profile", getDeletePage);
