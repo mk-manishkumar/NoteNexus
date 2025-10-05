@@ -6,32 +6,40 @@ import { Input } from "./ui/input";
 import { toast } from "react-toastify";
 import { profileApi } from "@/api/api";
 import { Button } from "./ui/button";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ChangePasswordPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { username } = useParams<{ username?: string }>();
+  const [formData, setFormData] = useState({ oldPassword: "", newPassword: "" });
+  const { oldPassword, newPassword } = formData;
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!username) {
+      toast.error("Missing username from URL.");
+      return;
+    }
     if (!oldPassword || !newPassword) {
-      toast.error("Both fields are required.");
+      toast.error("Both password fields are required.");
       return;
     }
 
     setLoading(true);
     try {
-      await profileApi.changePassword({ oldPassword, newPassword });
-      toast.success("Password changed successfully");
-    } catch (error) {
+      await profileApi.changePassword(username, formData);
+      toast.success("Password Changed");
+      setFormData({ oldPassword: "", newPassword: "" });
+      navigate("/login");
+    } catch (error: unknown) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
-      toast.error("Failed to update password");
+      const message = error instanceof Error ? error.message : "Failed to change password";
+      toast.error(message);
     } finally {
       setLoading(false);
-      setOldPassword("");
-      setNewPassword("");
     }
   };
 
@@ -41,12 +49,9 @@ const ChangePasswordPage: React.FC = () => {
       <div className="bg-zinc-900 w-full flex-grow p-8 flex items-center justify-center">
         <div className="max-w-2xl mx-auto w-full">
           <div className="mb-8 text-center">
-            <h3 className="text-4xl font-bold bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">
-              Change Password
-            </h3>
+            <h3 className="text-4xl font-bold bg-gradient-to-r from-[#CA2B58] to-[#E63578] bg-clip-text text-transparent">Change Password</h3>
             <p className="text-gray-400 mt-2">Update your password to keep your account secure</p>
           </div>
-
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-xl"></div>
             <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-2xl">
@@ -58,9 +63,8 @@ const ChangePasswordPage: React.FC = () => {
                   <Input
                     type="password"
                     name="oldPassword"
-                    id="oldPassword"
                     value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
+                    onChange={(e) => setFormData({ ...formData, oldPassword: e.target.value })}
                     className={`
                       w-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-400
                       px-4 py-7 rounded-xl outline-none border border-white/20
@@ -74,7 +78,6 @@ const ChangePasswordPage: React.FC = () => {
                     disabled={loading}
                   />
                 </div>
-
                 <div className="mb-8">
                   <Label htmlFor="newPassword" className="block text-white font-semibold mb-4">
                     New Password
@@ -82,9 +85,8 @@ const ChangePasswordPage: React.FC = () => {
                   <Input
                     type="password"
                     name="newPassword"
-                    id="newPassword"
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
                     className={`
                       w-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-400
                       px-4 py-7 rounded-xl outline-none border border-white/20
@@ -98,7 +100,6 @@ const ChangePasswordPage: React.FC = () => {
                     disabled={loading}
                   />
                 </div>
-
                 <Button
                   type="submit"
                   disabled={loading}
@@ -125,5 +126,4 @@ const ChangePasswordPage: React.FC = () => {
     </div>
   );
 };
-
 export default ChangePasswordPage;
