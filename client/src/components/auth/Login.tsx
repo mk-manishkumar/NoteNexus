@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { authApi } from "@/api/api";
+import { Spinner } from "@/components/ui/spinner";
 
 const inputClassName = "block w-full sm:w-96 bg-transparent mb-4 rounded-md border-zinc-700 px-4 py-2 border-[1px] outline-none text-zinc-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors";
 
@@ -15,11 +16,9 @@ type LoginFormData = {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState<LoginFormData>({
-    email: "",
-    password: "",
-  });
   const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [form, setForm] = useState<LoginFormData>({ email: "", password: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -49,6 +48,37 @@ const Login: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    authApi
+      .checkAuth()
+      .then((res) => {
+        if (res?.data?.success && res.data?.user?.username) {
+          navigate(`/profile/${res.data.user.username}`, { replace: true });
+        } else {
+          setCheckingAuth(false);
+        }
+      })
+      .catch(() => {
+        setCheckingAuth(false);
+      });
+  }, [navigate]);
+
+  if (checkingAuth) {
+    return (
+      <div className="flex flex-col min-h-screen bg-zinc-900">
+        <motion.header className="bg-[#CA2B58] p-5" initial={{ y: -40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: "spring", damping: 20, stiffness: 120 }}>
+          <h1 className="font-[cursive] text-center text-white text-2xl tracking-tight">NoteNexus</h1>
+        </motion.header>
+        <div className="flex flex-grow justify-center items-center">
+          <Spinner className="size-8" />
+        </div>
+        <footer className="bg-[#CA2B58] p-4">
+          <p className="text-center text-white text-xl tracking-tight">NoteNexus &copy; 2024</p>
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen relative overflow-hidden">
