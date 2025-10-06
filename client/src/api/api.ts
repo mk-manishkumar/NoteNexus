@@ -15,7 +15,7 @@ export const authApi = {
     api.post("/auth/register", data),
   login: (data: { email: string; password: string }) => api.post("/auth/login", data),
   logout: () => api.post("/auth/logout"),
-  checkAuth: () => api.get("/auth/me"),
+  checkAuth: () => api.get("/auth/check-auth"),
   guestSignIn: () => api.post("/auth/guest-signin"),
 };
 
@@ -27,7 +27,7 @@ export const profileApi = {
   changePassword: (username: string, data: { oldPassword: string; newPassword: string }) =>
     api.put(`/profile/${username}/change-password`, data),
   deleteProfile: (username: string, data: { password: string }) =>
-    api.delete(`/profile/${username}`, { data }),
+    api.delete(`/profile/${username}/delete-profile`, { data }),
 };
 
 // Notes API

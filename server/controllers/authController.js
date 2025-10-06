@@ -53,17 +53,43 @@ export const register = async (req, res) => {
 };
 
 // Check if user is authenticated (returns user info if valid token)
-export const checkAuth = (req, res) => {
-  const token = req.cookies.token;
+export const checkAuth = async (req, res) => {
+  const token = req.cookies?.token;
   if (!token) {
     return res.status(401).json({ success: false, message: "No token provided." });
   }
+
   try {
+    // First decode to know which secret to verify with
     const decoded = jwt.decode(token);
+    if (!decoded || !decoded.role || !decoded.id) {
+      return res.status(401).json({ success: false, message: "Invalid token." });
+    }
+
+    // Verify signature with role-specific secret
     const verified = verifyToken(token, decoded.role);
-    res.status(200).json({ success: true, user: { username: verified.username, role: verified.role } });
-  } catch (error) {
-    res.status(401).json({ success: false, message: "Invalid token." });
+    // verified contains: id, username, role
+
+    // Load full user document based on role
+    let doc = null;
+    if (verified.role === "guest") doc = await Guest.findById(verified.id).lean();
+    else doc = await User.findById(verified.id).lean();
+
+    if (!doc) return res.status(401).json({ success: false, message: "Account not found." });
+
+    // Normalize response fields
+    const payload = {
+      id: String(doc._id),
+      username: doc.username,
+      name: doc.name ?? null,
+      email: doc.email ?? null,
+      age: doc.age ?? null,
+      role: verified.role,
+    };
+
+    return res.status(200).json({ success: true, user: payload });
+  } catch (err) {
+    return res.status(401).json({ success: false, message: "Invalid or expired token." });
   }
 };
 
@@ -86,21 +112,6 @@ export const login = async (req, res) => {
     res.status(200).json({ success: true, user: { id: user._id, username: user.username } });
   } catch (err) {
     res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-};
-
-// Check if user is logged in (helper for UI, returns user info)
-export const checkLogin = (req, res) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.status(200).json({ success: true, loggedIn: false });
-  }
-  try {
-    const decoded = jwt.decode(token);
-    const verified = verifyToken(token, decoded.role);
-    return res.status(200).json({ success: true, loggedIn: true, user: { username: verified.username, role: verified.role } });
-  } catch (error) {
-    return res.status(401).json({ success: false, message: "Invalid token. Please log in again." });
   }
 };
 

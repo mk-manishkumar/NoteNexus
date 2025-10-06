@@ -6,9 +6,10 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import { profileApi } from "@/api/api"; // update path as per your project
 
 const DeleteProfilePage: React.FC = () => {
+  const navigate = useNavigate();
+  const { username } = useParams<{ username?: string }>();
   const [isFocused, setIsFocused] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,6 +43,19 @@ const DeleteProfilePage: React.FC = () => {
       setPassword("");
     }
   };
+
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    try {
+      
+    } catch (error) {
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      const message = error instanceof Error ? error.message : "Failed to change password";
+      toast.error(message);
+    }
+  }
+  
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -84,7 +98,7 @@ const DeleteProfilePage: React.FC = () => {
               </div>
 
               {/* Delete Form */}
-              <form className="space-y-6" onSubmit={submitHandler}>
+              <form onSubmit={submitHandler} className="space-y-6">
                 {/* Password Field */}
                 <div>
                   <Label
@@ -96,7 +110,6 @@ const DeleteProfilePage: React.FC = () => {
                   <Input
                     type="password"
                     name="password"
-                    id="password"
                     className={`
                       w-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 
                       py-6 rounded-xl outline-none border border-white/20
