@@ -6,6 +6,7 @@ import { notesApi } from "@/api/api";
 import { toast } from "react-toastify";
 import Searchbar from "./Searchbar";
 import { Button } from "./ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useUserProfile } from "@/customHooks/useUserProfile";
 
 type Note = {

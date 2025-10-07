@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { profileApi } from "@/api/api";
 import { Button } from "./ui/button";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const ChangePasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -36,8 +37,11 @@ const ChangePasswordPage: React.FC = () => {
       navigate("/login");
     } catch (error: unknown) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
-      const message = error instanceof Error ? error.message : "Failed to change password";
-      toast.error(message);
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to change password");
+      }
     } finally {
       setLoading(false);
     }

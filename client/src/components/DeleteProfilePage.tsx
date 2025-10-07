@@ -6,24 +6,36 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
+import { profileApi } from "@/api/api";
+import axios from "axios";
 
 const DeleteProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { username } = useParams<{ username?: string }>();
   const [isFocused, setIsFocused] = useState(false);
+  const [password, setPassword] = useState("");
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
+    if (!username) {
+      toast.error("Username is missing.");
+      return;
+    }
+
     try {
-      
+      await profileApi.deleteProfile(username, { password });
+      toast.success("Profile deleted successfully.");
+      navigate("/");
     } catch (error) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
-      const message = error instanceof Error ? error.message : "Failed to change password";
-      toast.error(message);
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to delete the profile");
+      }
     }
-  }
-  
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -70,6 +82,8 @@ const DeleteProfilePage: React.FC = () => {
                   <Input
                     type="password"
                     name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className={`
                       w-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 
                       py-6 rounded-xl outline-none border border-white/20
