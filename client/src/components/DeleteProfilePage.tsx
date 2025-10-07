@@ -6,56 +6,36 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
+import { profileApi } from "@/api/api";
+import axios from "axios";
 
 const DeleteProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { username } = useParams<{ username?: string }>();
   const [isFocused, setIsFocused] = useState(false);
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const params = useParams<{ username?: string }>();
-  const navigate = useNavigate();
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!password) {
-      toast.error("Password is required.");
-      return;
-    }
-    if (!params.username) {
-      toast.error("Username is missing from URL.");
+    if (!username) {
+      toast.error("Username is missing.");
       return;
     }
 
-    setLoading(true);
     try {
-      // Adjust API signature if your delete API expects differently
-      await profileApi.deleteProfile(params.username, { password });
-      toast.success("Profile deleted permanently.");
-      // Optionally: logout user, redirect to home or login
-      navigate("/login");
+      await profileApi.deleteProfile(username, { password });
+      toast.success("Profile deleted successfully.");
+      navigate("/");
     } catch (error) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
-      toast.error("Failed to delete profile. Please check your password.");
-    } finally {
-      setLoading(false);
-      setPassword("");
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to delete the profile");
+      }
     }
   };
-
-  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    try {
-      
-    } catch (error) {
-      if (import.meta.env.VITE_ENV === "development") console.log(error);
-      const message = error instanceof Error ? error.message : "Failed to change password";
-      toast.error(message);
-    }
-  }
-  
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -65,9 +45,7 @@ const DeleteProfilePage: React.FC = () => {
         <div className="max-w-2xl mx-auto w-full">
           {/* Header Section */}
           <div className="mb-8 text-center">
-            <h3 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-rose-600 bg-clip-text text-transparent">
-              Delete Profile
-            </h3>
+            <h3 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-rose-600 bg-clip-text text-transparent">Delete Profile</h3>
             <p className="text-gray-400 mt-2">This action cannot be undone</p>
           </div>
 
@@ -88,12 +66,9 @@ const DeleteProfilePage: React.FC = () => {
 
               {/* Warning Text */}
               <div className="text-center mb-8">
-                <p className="text-white text-xl font-semibold mb-3">
-                  Are you sure you want to delete your profile?
-                </p>
+                <p className="text-white text-xl font-semibold mb-3">Are you sure you want to delete your profile?</p>
                 <p className="text-gray-300">
-                  Please enter your{" "}
-                  <strong className="text-red-400 font-bold">password</strong> to confirm deletion.
+                  Please enter your <strong className="text-red-400 font-bold">password</strong> to confirm deletion.
                 </p>
               </div>
 
@@ -101,15 +76,14 @@ const DeleteProfilePage: React.FC = () => {
               <form onSubmit={submitHandler} className="space-y-6">
                 {/* Password Field */}
                 <div>
-                  <Label
-                    htmlFor="password"
-                    className="block text-white font-semibold mb-4 text-center"
-                  >
+                  <Label htmlFor="password" className="block text-white font-semibold mb-4 text-center">
                     Password
                   </Label>
                   <Input
                     type="password"
                     name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className={`
                       w-full bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 
                       py-6 rounded-xl outline-none border border-white/20
@@ -119,10 +93,7 @@ const DeleteProfilePage: React.FC = () => {
                     placeholder="Enter your password"
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
                     required
-                    disabled={loading}
                   />
                 </div>
 
@@ -137,20 +108,15 @@ const DeleteProfilePage: React.FC = () => {
                     hover:shadow-lg hover:shadow-red-500/30
                     hover:scale-105 active:scale-95
                     overflow-hidden group relative
-                    ${loading ? "opacity-60 cursor-not-allowed" : ""}
                   `}
-                  disabled={loading}
                 >
-                  <span className="relative z-10">{loading ? "Deleting..." : "Delete Profile Permanently"}</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Button>
               </form>
 
               {/* Additional Warning */}
               <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-                <p className="text-red-300 text-sm text-center">
-                  ⚠️ Warning: This will permanently delete your account and all associated data. This action cannot be reversed.
-                </p>
+                <p className="text-red-300 text-sm text-center">⚠️ Warning: This will permanently delete your account and all associated data. This action cannot be reversed.</p>
               </div>
             </div>
           </div>
