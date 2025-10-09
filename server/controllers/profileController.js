@@ -12,26 +12,18 @@ export const displayProfile = async (req, res) => {
 
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    res.status(200).json({ success: true, user });
+    const sanitizedUser = user.toObject();
+    delete sanitizedUser.password;
+    delete sanitizedUser.__v;
+    delete sanitizedUser.createdAt;
+    delete sanitizedUser.updatedAt;
+    delete sanitizedUser.lastLogin;
+    delete sanitizedUser._id;
+
+    res.status(200).json({ success: true, user: sanitizedUser });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Failed to fetch profile" });
-  }
-};
-
-// Get user profile for editing
-export const displayEditProfile = async (req, res) => {
-  try {
-    const { username } = req.params;
-    const user = req.user.role === "guest" ? await Guest.findOne({ username }) : await User.findOne({ username });
-
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-    // Send guestMode flag for frontend if needed
-    res.status(200).json({ success: true, user, guestMode: req.user.role === "guest" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Failed to fetch profile for editing" });
   }
 };
 
@@ -55,21 +47,6 @@ export const updateProfile = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Failed to update profile" });
-  }
-};
-
-// Display change password page (can be combined with profile display)
-export const changePassword = async (req, res) => {
-  try {
-    const { username } = req.params;
-    const user = req.user.role === "guest" ? await Guest.findOne({ username }) : await User.findOne({ username });
-
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-    res.status(200).json({ success: true, user, guestMode: req.user.role === "guest" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Failed to fetch user for password change" });
   }
 };
 
@@ -103,21 +80,6 @@ export const updatePassword = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Failed to update password" });
-  }
-};
-
-// Get user delete confirmation data
-export const getDeletePage = async (req, res) => {
-  try {
-    const { username } = req.params;
-    const user = req.user.role === "guest" ? await Guest.findOne({ username }) : await User.findOne({ username });
-
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-    res.status(200).json({ success: true, user, guestMode: req.user.role === "guest" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Failed to fetch user for deletion" });
   }
 };
 
