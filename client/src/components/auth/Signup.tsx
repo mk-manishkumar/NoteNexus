@@ -64,6 +64,18 @@ const Signup: React.FC = () => {
     }
   };
 
+  const guestSignIn = async () => {
+    try {
+      const response = await authApi.guestSignIn();
+      const username = response?.data?.user?.username;
+      toast.success("Guest Signin successful!");
+      navigate(`/profile/${username}`);
+    } catch (error) {
+      if (import.meta.env.VITE_ENV === "development") console.log(error);
+      toast.error("Guest SignIn failed.");
+    }
+  };
+
   useEffect(() => {
     authApi
       .checkAuth()
@@ -144,7 +156,7 @@ const Signup: React.FC = () => {
         </motion.form>
 
         <motion.div className="mt-4 flex justify-center" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-          <Button asChild className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 font-semibold rounded-md transition-colors cursor-pointer relative overflow-hidden">
+          <Button asChild className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 font-semibold rounded-md transition-colors cursor-pointer relative overflow-hidden" onClick={guestSignIn}>
             <motion.span
               whileTap={{ scale: 0.95 }}
               whileHover={{

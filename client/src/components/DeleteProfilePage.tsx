@@ -8,12 +8,15 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { profileApi } from "@/api/api";
 import axios from "axios";
+import { useUserProfile } from "@/customHooks/useUserProfile";
 
 const DeleteProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { username } = useParams<{ username?: string }>();
   const [isFocused, setIsFocused] = useState(false);
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { profile } = useUserProfile(username || "");
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,6 +26,7 @@ const DeleteProfilePage: React.FC = () => {
       return;
     }
 
+    setLoading(true);
     try {
       await profileApi.deleteProfile(username, { password });
       toast.success("Profile deleted successfully.");
@@ -34,8 +38,21 @@ const DeleteProfilePage: React.FC = () => {
       } else {
         toast.error("Failed to delete the profile");
       }
+    } finally {
+      setLoading(false);
     }
   };
+
+  // 🧠 Role-based gating for guest user
+  const checkRole = () => profile?.name === "Guest User";
+
+  // 🧩 Button label logic
+  let buttonText = "Delete Profile";
+  if (checkRole()) {
+    buttonText = "Not for Guest users";
+  } else if (loading) {
+    buttonText = "Deleting...";
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -51,7 +68,6 @@ const DeleteProfilePage: React.FC = () => {
 
           {/* Warning Container */}
           <div className="relative">
-            {/* Glowing background */}
             <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-rose-500/10 to-red-500/10 rounded-2xl blur-xl"></div>
 
             <div className="relative bg-white/5 backdrop-blur-sm border border-red-500/20 rounded-2xl p-8 shadow-2xl">
@@ -94,12 +110,14 @@ const DeleteProfilePage: React.FC = () => {
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     required
+                    disabled={loading || checkRole()}
                   />
                 </div>
 
                 {/* Delete Button */}
                 <Button
                   type="submit"
+                  disabled={loading || checkRole()}
                   className={`
                     w-full bg-gradient-to-r from-red-600 to-rose-700 
                     hover:from-red-500 hover:to-rose-600
@@ -108,9 +126,11 @@ const DeleteProfilePage: React.FC = () => {
                     hover:shadow-lg hover:shadow-red-500/30
                     hover:scale-105 active:scale-95
                     overflow-hidden group relative
+                    ${loading || checkRole() ? "opacity-60 cursor-not-allowed grayscale" : ""}
                   `}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  <span className="relative z-10">{buttonText}</span>
+                  <div className={checkRole() ? "absolute inset-0 bg-gray-500/30 rounded-md" : "absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"} />
                 </Button>
               </form>
 

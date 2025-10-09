@@ -42,6 +42,9 @@ const EditProfilePage: React.FC = () => {
     }
   };
 
+  //  Role-based gating for guest user
+  const checkRole = () => profile?.name === "Guest User";
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -162,8 +165,8 @@ const EditProfilePage: React.FC = () => {
                     overflow-hidden group relative
                   "
                 >
-                  <span className="relative z-10">Save Changes</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  <span className="relative z-10">{checkRole() ? "Not for Guest users" : "Save Changes"}</span>
+                  <div className={checkRole() ? "absolute inset-0 bg-gray-500/30 cursor-not-allowed rounded-md" : "absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"} />
                 </Button>
               </form>
 
