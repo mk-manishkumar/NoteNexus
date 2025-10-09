@@ -8,14 +8,17 @@ import { profileApi } from "@/api/api";
 import { Button } from "./ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useUserProfile } from "@/customHooks/useUserProfile";
 
 const ChangePasswordPage: React.FC = () => {
+  const params = useParams<{ username?: string }>();
   const navigate = useNavigate();
   const { username } = useParams<{ username?: string }>();
   const [formData, setFormData] = useState({ oldPassword: "", newPassword: "" });
   const { oldPassword, newPassword } = formData;
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { profile } = useUserProfile(params.username || "");
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,6 +49,17 @@ const ChangePasswordPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Role-based gating for guest user
+  const checkRole = () => profile?.name === "Guest User";
+
+  // Extract the button text to avoid nested ternary in JSX
+  let buttonText = "Save Changes";
+  if (checkRole()) {
+    buttonText = "Not for Guest users";
+  } else if (loading) {
+    buttonText = "Saving...";
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -106,20 +120,21 @@ const ChangePasswordPage: React.FC = () => {
                 </div>
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || checkRole()}
                   className={`
-                    w-full bg-gradient-to-r from-yellow-500 to-orange-500
-                    hover:from-yellow-400 hover:to-orange-400
-                    text-black font-semibold px-6 py-4 rounded-xl
-                    transition-all duration-300
-                    hover:shadow-lg hover:shadow-yellow-500/30
-                    hover:scale-105 active:scale-95
-                    overflow-hidden group relative
-                    ${loading ? "opacity-60 cursor-not-allowed" : ""}
-                  `}
+                  w-full bg-gradient-to-r from-yellow-500 to-orange-500
+                  hover:from-yellow-400 hover:to-orange-400
+                  text-black font-semibold px-6 py-4 rounded-xl
+                  transition-all duration-300
+                  hover:shadow-lg hover:shadow-yellow-500/30
+                  hover:scale-105 active:scale-95
+                  overflow-hidden group relative
+                  ${loading || checkRole() ? "opacity-60 cursor-not-allowed grayscale" : ""}
+                `}
                 >
-                  <span className="relative z-10">{loading ? "Saving..." : "Save Changes"}</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  <span className="relative z-10">{buttonText}</span>
+
+                  <div className={checkRole() ? "absolute inset-0 bg-gray-500/30 rounded-md" : "absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"} />
                 </Button>
               </form>
             </div>

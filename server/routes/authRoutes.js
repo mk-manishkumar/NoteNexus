@@ -17,6 +17,6 @@ authRouter.post("/login", login);
 authRouter.post("/logout", authMiddleware, logout);
 
 // guest signin
-authRouter.get("/guest-signin", guestSignIn);
+authRouter.post("/guest-signin", guestSignIn);
 
 export default authRouter;
