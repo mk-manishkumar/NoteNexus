@@ -50,22 +50,25 @@ const Header: React.FC = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 w-full bg-[#CA2B58] flex flex-col items-center py-5 gap-5 md:hidden z-50">
-          <Link to={`/profile/${username}/notes`} className="w-full text-center border-t border-white pt-[10px]" onClick={() => setIsOpen(false)}>
+        <div className="absolute top-full left-0 w-full bg-[#CA2B58] md:hidden z-50">
+          <Link to={`/profile/${username}/notes`} className="block w-full text-center py-4 text-white border-t border-white/30 hover:bg-white/10 transition-colors duration-200" onClick={() => setIsOpen(false)}>
             NOTES
           </Link>
-          <Link to={`/profile/${username}/bin`} className="w-full text-center border-t border-white pt-[10px]" onClick={() => setIsOpen(false)}>
+
+          <Link to={`/profile/${username}/bin`} className="block w-full text-center py-4 text-white border-t border-white/30 hover:bg-white/10 transition-colors duration-200" onClick={() => setIsOpen(false)}>
             BIN
           </Link>
-          <Link to={`/profile/${username}/archive`} className="w-full text-center border-t border-white pt-[10px]" onClick={() => setIsOpen(false)}>
+
+          <Link to={`/profile/${username}/archive`} className="block w-full text-center py-4 text-white border-t border-white/30 hover:bg-white/10 transition-colors duration-200" onClick={() => setIsOpen(false)}>
             ARCHIVE
           </Link>
+
           <button
             onClick={() => {
               setIsOpen(false);
               handleLogout();
             }}
-            className="w-full text-center border-t border-white pt-[10px]"
+            className="w-full text-center py-4 text-white border-t border-white/30 hover:bg-white/10 transition-colors duration-200"
             type="button"
           >
             LOG OUT
