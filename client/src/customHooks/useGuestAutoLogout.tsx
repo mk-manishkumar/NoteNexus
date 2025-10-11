@@ -13,46 +13,32 @@ const useGuestAutoLogout = () => {
     const checkAndStartPolling = async () => {
       try {
         const res = await authApi.checkAuth();
+        console.log(res);
         if (res.data?.user?.role === "guest") {
-          // Avoid creating multiple intervals
-          if (interval) return;
-
           interval = setInterval(async () => {
             try {
               const checkRes = await authApi.checkAuth();
               if (!checkRes.data?.success) {
                 toast.info("Guest session expired. Please register to continue.");
                 navigate("/");
-                if (interval) {
-                  clearInterval(interval);
-                  interval = null;
-                }
+                if (interval) clearInterval(interval);
               }
             } catch {
               toast.info("Guest session expired. Please register to continue.");
               navigate("/");
-              if (interval) {
-                clearInterval(interval);
-                interval = null;
-              }
+              if (interval) clearInterval(interval);
             }
           }, 30000);
         }
       } catch {
-        // not authenticated, do nothing
+        // not authenticated, do nothing or optionally redirect
       }
     };
 
-    // Run once on mount
     checkAndStartPolling();
 
-    // Listen for "guest-login" event (triggered after guest signin)
-    window.addEventListener("guest-login", checkAndStartPolling);
-
-    // Cleanup on unmount
     return () => {
       if (interval) clearInterval(interval);
-      window.removeEventListener("guest-login", checkAndStartPolling);
     };
   }, [navigate]);
 };

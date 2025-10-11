@@ -69,8 +69,8 @@ const Signup: React.FC = () => {
       const response = await authApi.guestSignIn();
       const username = response?.data?.user?.username;
       toast.success("Guest Signin successful!");
-      window.dispatchEvent(new Event("guest-login"));
       navigate(`/profile/${username}`);
+      window.location.reload();
     } catch (error) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
       toast.error("Guest SignIn failed.");
