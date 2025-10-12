@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
@@ -23,31 +23,60 @@ const NotesPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [notesLoading, setNotesLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const loaderRef = useRef<HTMLDivElement | null>(null);
 
+  // Fetch paginated notes
   const displayNotes = useCallback(async () => {
-    setNotesLoading(true);
     try {
-      const response = await notesApi.fetchNotes();
-      const noteList = response?.data?.notes || [];
-      setNotes(noteList);
+      setNotesLoading(true);
+      const response = await notesApi.fetchNotes(page, 10);
+      const newNotes = response?.data?.notes || [];
+
+      setNotes((prev) => [...prev, ...newNotes]);
+      setHasMore(response?.data?.notes?.length > 0);
     } catch (error) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
       toast.error("Failed to fetch Notes");
     } finally {
       setNotesLoading(false);
     }
-  }, []);
+  }, [page]);
 
+  // Initial + pagination load
   useEffect(() => {
     displayNotes();
   }, [displayNotes]);
 
+  // Infinite scroll observer 
+  useEffect(() => {
+    const loader = loaderRef.current;
+    if (!loader) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !notesLoading) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.observe(loader);
+    return () => {
+      observer.unobserve(loader); 
+    };
+  }, [hasMore, notesLoading]);
+
+  // Search filter
   const filteredNotes = useMemo(() => {
     if (!searchTerm.trim()) return notes;
     const lower = searchTerm.toLowerCase();
     return notes.filter((note) => note.title.toLowerCase().includes(lower) || note.description.toLowerCase().includes(lower));
   }, [notes, searchTerm]);
 
+  // Delete + archive + clear
   const deleteNote = async (noteId: string) => {
     try {
       await notesApi.deleteNote(noteId);
@@ -78,6 +107,7 @@ const NotesPage: React.FC = () => {
     }
   };
 
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -101,7 +131,7 @@ const NotesPage: React.FC = () => {
   };
 
   const renderNotesSection = () => {
-    if (notesLoading) {
+    if (notesLoading && notes.length === 0) {
       return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center items-center mt-20">
           <Spinner className="size-20 text-white" />
@@ -111,26 +141,43 @@ const NotesPage: React.FC = () => {
 
     if (filteredNotes.length > 0) {
       return (
-        <motion.ul variants={containerVariants} initial="hidden" animate="visible" className="list-none flex gap-5 flex-wrap justify-center xl:justify-start">
-          <AnimatePresence mode="popLayout">
-            {filteredNotes.map((note) => (
-              <motion.li key={note._id} variants={itemVariants} layout exit="exit" whileHover={{ scale: 1.03, transition: { duration: 0.2 } }} className="p-4 mb-2 rounded-md w-96 overflow-hidden bg-zinc-800 text-zinc-400">
-                <Link to={`/profile/${params.username}/note/${note.slug}`} className="font-bold text-2xl mb-2 inline-block text-blue-500 hover:underline">
-                  {note.title}
-                </Link>
-                <p className="h-24 overflow-hidden">{note.description}</p>
-                <div className="btns mt-5 flex justify-between">
-                  <Button onClick={() => deleteNote(note._id)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
-                    Delete
-                  </Button>
-                  <Button onClick={() => archiveNote(note._id)} className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">
-                    Archive
-                  </Button>
-                </div>
-              </motion.li>
-            ))}
-          </AnimatePresence>
-        </motion.ul>
+        <>
+          <motion.ul variants={containerVariants} initial="hidden" animate="visible" className="list-none flex gap-5 flex-wrap justify-center xl:justify-start">
+            <AnimatePresence mode="popLayout">
+              {filteredNotes.map((note) => (
+                <motion.li
+                  key={note._id}
+                  variants={itemVariants}
+                  layout
+                  exit="exit"
+                  whileHover={{
+                    scale: 1.03,
+                    transition: { duration: 0.2 },
+                  }}
+                  className="p-4 mb-2 rounded-md w-96 overflow-hidden bg-zinc-800 text-zinc-400"
+                >
+                  <Link to={`/profile/${params.username}/note/${note.slug}`} className="font-bold text-2xl mb-2 inline-block text-blue-500 hover:underline">
+                    {note.title}
+                  </Link>
+                  <p className="h-24 overflow-hidden">{note.description}</p>
+                  <div className="btns mt-5 flex justify-between">
+                    <Button onClick={() => deleteNote(note._id)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
+                      Delete
+                    </Button>
+                    <Button onClick={() => archiveNote(note._id)} className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">
+                      Archive
+                    </Button>
+                  </div>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </motion.ul>
+
+          {/* Loader for infinite scroll */}
+          <div ref={loaderRef} className="flex justify-center my-10">
+            {notesLoading && <Spinner className="size-10 text-white" />}
+          </div>
+        </>
       );
     }
 

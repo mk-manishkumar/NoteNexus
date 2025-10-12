@@ -32,7 +32,7 @@ export const profileApi = {
 
 // Notes API
 export const notesApi = {
-  fetchNotes: () => api.get("/notes"),
+  fetchNotes: (page = 1, limit = 10) => api.get("/notes", { params: { page, limit } }),
   addNote: (data: { title: string; description: string }) => api.post("/notes/addnotes", data),
   deleteNote: (noteId: string) => api.delete(`/notes/delete/${noteId}`),
   archiveNote: (noteId: string) => api.post(`/notes/archive/${noteId}`),
