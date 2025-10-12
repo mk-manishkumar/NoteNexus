@@ -21,13 +21,36 @@ export const fetchNotes = async (req, res) => {
     const { username, role } = req.user;
     const user = await getUserForRole(role, username);
 
-    const activeNotes = await Notes.find({
-      user,
-      isDeleted: false,
-      isArchived: false,
-    }).lean();
+    // Extract pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    res.status(200).json({ success: true, notes: activeNotes });
+    // Fetch paginated notes
+    const [notes, total] = await Promise.all([
+      Notes.find({
+        user: user._id,
+        isDeleted: false,
+        isArchived: false,
+      })
+        .sort({ createdAt: -1 }) // newest first
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Notes.countDocuments({
+        user: user._id,
+        isDeleted: false,
+        isArchived: false,
+      }),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      notes,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalNotes: total,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Failed to fetch notes" });
