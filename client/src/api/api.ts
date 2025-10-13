@@ -9,6 +9,28 @@ const api = axios.create({
   },
 });
 
+api.interceptors.response.use(
+  (response) => response, // Pass through successful (2xx) responses
+  (error) => {
+    // If a response was received (not a network error)
+    if (error.response) {
+      // If the status is 401 (Unauthorized)
+      if (error.response.status === 401) {
+        // Return the response object directly to handle 401 gracefully
+        return error.response;
+      }
+      // For all other errors, reject with an Error object
+      const reason = error instanceof Error ? error : new Error(JSON.stringify(error));
+      return Promise.reject(reason);
+    }
+    // For network errors (no response), reject with an Error object
+    const reason = error instanceof Error ? error : new Error('Network error');
+    return Promise.reject(reason);
+  }
+);
+
+
+
 // Auth API
 export const authApi = {
   register: (data: { username: string; name: string; age: number; email: string; password: string }) =>

@@ -81,17 +81,14 @@ const Signup: React.FC = () => {
     authApi
       .checkAuth()
       .then((res) => {
-        if (res?.data?.success && res.data?.user?.username) {
-          navigate(`/profile/${res.data.user.username}`, { replace: true });
-        } else {
-          setCheckingAuth(false);
-        }
+        if (res?.data?.success && res.data?.user?.username) navigate(`/profile/${res.data.user.username}`, { replace: true });
+        else setCheckingAuth(false);
       })
-      .catch(() => {
+      .catch((error) => {
+        if (import.meta.env.VITE_ENV === "development") console.error("Network or severe error during checkAuth:", error);
         setCheckingAuth(false);
       });
   }, [navigate]);
-  
 
   if (checkingAuth) {
     return (
