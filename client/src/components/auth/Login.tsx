@@ -53,14 +53,14 @@ const Login: React.FC = () => {
     authApi
       .checkAuth()
       .then((res) => {
-        if (res?.data?.success && res.data?.user?.username) {
+        if (res.status === 200 && res?.data?.success && res.data?.user?.username) {
           navigate(`/profile/${res.data.user.username}`, { replace: true });
         } else {
           setCheckingAuth(false);
         }
       })
-      .catch(() => {
-        setCheckingAuth(false);
+      .catch((error) => {
+        if (import.meta.env.VITE_ENV === "development") console.error("checkAuth error details:", error);
       });
   }, [navigate]);
 
