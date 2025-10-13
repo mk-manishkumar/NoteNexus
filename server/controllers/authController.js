@@ -124,7 +124,12 @@ export const logout = async (req, res) => {
       if (guestUser) await Notes.deleteMany({ user: guestUser._id });
     }
 
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    });
+
     res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.error(error);
