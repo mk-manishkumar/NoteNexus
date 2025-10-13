@@ -17,6 +17,14 @@ type Note = {
   slug: string;
 };
 
+function mergeNotes(prev: Note[], newNotes: Note[]): Note[] {
+  const merged = [...prev];
+  newNotes.forEach((n) => {
+    if (!merged.some((m) => m._id === n._id)) merged.push(n);
+  });
+  return merged;
+}
+
 const NotesPage: React.FC = () => {
   const params = useParams();
   const { profile } = useUserProfile(params.username);
@@ -26,16 +34,19 @@ const NotesPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement | null>(null);
+  const hasFetchedOnce = useRef(false); 
 
-  // Fetch paginated notes
+  // ✅ Fetch paginated notes
   const displayNotes = useCallback(async () => {
     try {
       setNotesLoading(true);
       const response = await notesApi.fetchNotes(page, 10);
       const newNotes = response?.data?.notes || [];
 
-      setNotes((prev) => [...prev, ...newNotes]);
-      setHasMore(response?.data?.notes?.length > 0);
+      // ✅ Avoid duplicates
+      setNotes((prev) => mergeNotes(prev, newNotes));
+
+      setHasMore(newNotes.length > 0);
     } catch (error) {
       if (import.meta.env.VITE_ENV === "development") console.log(error);
       toast.error("Failed to fetch Notes");
@@ -44,12 +55,15 @@ const NotesPage: React.FC = () => {
     }
   }, [page]);
 
-  // Initial + pagination load
+  // ✅ Initial + pagination load (StrictMode safe)
   useEffect(() => {
+    if (hasFetchedOnce.current) return; 
+    hasFetchedOnce.current = true;
+
     displayNotes();
   }, [displayNotes]);
 
-  // Infinite scroll observer 
+  // ✅ Infinite scroll observer 
   useEffect(() => {
     const loader = loaderRef.current;
     if (!loader) return;
@@ -64,19 +78,20 @@ const NotesPage: React.FC = () => {
     );
 
     observer.observe(loader);
+
     return () => {
-      observer.unobserve(loader); 
+      if (loader) observer.unobserve(loader); 
     };
   }, [hasMore, notesLoading]);
 
-  // Search filter
+  // ✅ Search filter
   const filteredNotes = useMemo(() => {
     if (!searchTerm.trim()) return notes;
     const lower = searchTerm.toLowerCase();
     return notes.filter((note) => note.title.toLowerCase().includes(lower) || note.description.toLowerCase().includes(lower));
   }, [notes, searchTerm]);
 
-  // Delete + archive + clear
+  // ✅ Delete + archive + clear
   const deleteNote = async (noteId: string) => {
     try {
       await notesApi.deleteNote(noteId);
@@ -107,7 +122,7 @@ const NotesPage: React.FC = () => {
     }
   };
 
-  // Animation variants
+  // ✅ Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -130,6 +145,7 @@ const NotesPage: React.FC = () => {
     },
   };
 
+  // ✅ Render Notes Section
   const renderNotesSection = () => {
     if (notesLoading && notes.length === 0) {
       return (
