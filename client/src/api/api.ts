@@ -10,26 +10,22 @@ const api = axios.create({
 });
 
 api.interceptors.response.use(
-  (response) => response, // Pass through successful (2xx) responses
+  (response) => response,
   (error) => {
-    // If a response was received (not a network error)
     if (error.response) {
-      // If the status is 401 (Unauthorized)
+      // For 401, silently resolve with the response (user is not authenticated)
+      // This prevents error logs since it's an expected auth state
       if (error.response.status === 401) {
-        // Return the response object directly to handle 401 gracefully
-        return error.response;
+        return Promise.resolve(error.response);
       }
-      // For all other errors, reject with an Error object
+      // For all other errors, reject
       const reason = error instanceof Error ? error : new Error(JSON.stringify(error));
       return Promise.reject(reason);
     }
-    // For network errors (no response), reject with an Error object
     const reason = error instanceof Error ? error : new Error('Network error');
     return Promise.reject(reason);
   }
 );
-
-
 
 // Auth API
 export const authApi = {
@@ -37,8 +33,12 @@ export const authApi = {
     api.post("/auth/register", data),
   login: (data: { email: string; password: string }) => api.post("/auth/login", data),
   logout: () => api.post("/auth/logout"),
-  checkAuth: () => api.get("/auth/check-auth"),
   guestSignIn: () => api.post("/auth/guest-signin"),
+  checkAuth: () => 
+    api.get("/auth/check-auth").catch((error) => {
+      if (error.response?.status === 401)   return error.response;
+      throw error;
+    }),
 };
 
 // Profile API
