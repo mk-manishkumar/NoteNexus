@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const api = axios.create({
@@ -7,23 +8,22 @@ const api = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
+  validateStatus: (status) => {
+    // Don't throw for 401 - treat it as a valid response
+    return status < 500 || status === 401;
+  },
 });
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      // For 401, silently resolve with the response (user is not authenticated)
-      // This prevents error logs since it's an expected auth state
-      if (error.response.status === 401) {
-        return Promise.resolve(error.response);
-      }
-      // For all other errors, reject
-      const reason = error instanceof Error ? error : new Error(JSON.stringify(error));
+    // Only reject for actual network errors or 5xx errors
+    if (!error.response || error.response.status >= 500) {
+      const reason = error instanceof Error ? error : new Error('Network error');
       return Promise.reject(reason);
     }
-    const reason = error instanceof Error ? error : new Error('Network error');
-    return Promise.reject(reason);
+    // For 4xx errors (including 401), return the response to handle in component
+    return error.response;
   }
 );
 
