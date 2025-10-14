@@ -13,7 +13,6 @@ const useGuestAutoLogout = () => {
     const checkAndStartPolling = async () => {
       try {
         const res = await authApi.checkAuth();
-        console.log(res);
         if (res.data?.user?.role === "guest") {
           interval = setInterval(async () => {
             try {
